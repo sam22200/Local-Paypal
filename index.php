@@ -55,7 +55,7 @@ mysql_close();
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Magasin Accueil</title>
-    <link rel="stylesheet" href="style/style.css" type="text/css" media="screen" />
+    <link href="style/style.css"  rel="stylesheet" media="screen" />
     <!-- Bootstrap Core CSS -->
     <link href="style/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->

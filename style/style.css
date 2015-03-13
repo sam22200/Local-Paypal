@@ -62,3 +62,16 @@ a:active {
 #paypal-elements {
 	padding-top: 70px;
 }
+
+@media all and (max-width: 1200px) { /* screen size until 1200px */
+    badge {
+    }
+}
+@media all and (max-width: 1000px) { /* screen size until 1000px */
+    badge {
+        }
+    }
+@media all and (max-width: 500px) { /* screen size until 500px */
+    badge {
+        }
+    }

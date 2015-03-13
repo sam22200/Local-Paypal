@@ -59,18 +59,17 @@ mysql_close();
         <div class="container">
           <div class="row">
 
-              <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 lg-offset-3 md-offset-3 sm-offset-3 xs-offset-3">
+              <div class="col-xs-10 col-sm-6 col-xs-offset-1 col-sm-offset-3">
                     <div class="thumbnail">
                         <img src="inventory_images/<?php echo $id ?>.jpg" alt="<?php echo $product_name ?>">
-                        <a href="inventory_images/<?php echo $id; ?>.jpg">Voir image Taille réelle</a></td>
+                        <a href="inventory_images/<?php echo $id; ?>.jpg"><p class="text-center">Voir image Taille réelle</p></a></td>
                         <div class="caption">
-                            <h4 class="pull-right"></span><span class="badge" style = "font-size: 18pt;">€<?php echo $price ?></span></h4>
-                            </span><span class="badge" style = "font-size: 18pt;"><?php echo "$category" . " - " . "$subcategory"; ?></span>
+                            <h4 class="pull-right"></span><span class="badge" >€<?php echo $price ?></span></h4>
+                            </span><span class="badge" ><?php echo "$category" . " - " . "$subcategory"; ?></span>
                             <br />
                             <br />
-                            <h4><a href="product.php?id=<?php echo $id ?>"><?php echo $details ?></a>
+                            <h4><a href="product.php?id=<?php echo $id ?>" style="white-space: normal;"><?php echo $details ?></a>
                             </h4>
-                            <p>Voir les détails de cet article <a target="_blank" href="product.php?id=<?php echo $id ?>">ici</a>.</p>
                         </div>
                         <div class="ratings">
                             <p class="pull-right">15 reviews</p>
@@ -82,10 +81,12 @@ mysql_close();
                                 <span class="glyphicon glyphicon-star"></span>
                             </p>
                         </div>
-                        <form id="form1" name="form1" method="post" action="cart.php">
-                          <input type="hidden" name="pid" id="pid" value="<?php echo $id; ?>" />
-                          <input class="btn btn-primary" type="submit" name="button" id="button" value="Ajouter au Panier" />
-                        </form>
+                        <div class="btn-paypal text-center">
+                          <form id="form1" name="form1" method="post" action="cart.php">
+                            <input type="hidden" name="pid" id="pid" value="<?php echo $id; ?>" />
+                            <input class="btn btn-primary" type="submit" name="button" id="button" value="Ajouter au Panier" />
+                          </form>
+                        </div>
                         </td>
                     </div>
               </div>
