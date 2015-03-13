@@ -1,4 +1,4 @@
-# Local-Paypa
+# Local-Paypal
 Test de la plateforme de paiement Paypal.
 Version spéciale pour une utilisation en LocalHost.
 
