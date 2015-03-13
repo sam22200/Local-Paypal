@@ -134,10 +134,10 @@ if (!isset($_SESSION["cart_array"]) || count($_SESSION["cart_array"]) < 1) {
           $cartOutputB .= '<img class="img-responsive img-thumbnail img-center center-block" src="inventory_images/' . $item_id . '.jpg" alt="' . $product_name. '" />';
         $cartOutputB .= '</div>';
         $cartOutputB .= '<div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 text-center">';
-          $cartOutputB .= '<span class="badge" style = "font-size: 1vw;">' . $price . 'EUR</span>';
+          $cartOutputB .= '<span class="badge" style = "">' . $price . 'EUR</span>';
         $cartOutputB .= '</div>';
 
-        $cartOutputB .= '<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2  text-center">';
+        $cartOutputB .= '<div class="col-lg-4 col-md-4 col-sm-4 col-xs-3  text-center">';
           $cartOutputB .= '<form action="cart.php" method="post">';
             $cartOutputB .= '<div class="input-group">';
               $cartOutputB .= '<input name="quantity" type="text" class="form-control" value="' . $each_item['quantity'] . '" maxlength="2" />';
@@ -150,10 +150,10 @@ if (!isset($_SESSION["cart_array"]) || count($_SESSION["cart_array"]) < 1) {
         $cartOutputB .= '</div>';
 
         $cartOutputB .= '</div>';
-          $cartOutputB .= '<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 text-center"><span class="badge" style = "font-size: 1vw;">' . $pricetotal . '</span>';
+          $cartOutputB .= '<div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 text-center"><span class="badge" style = "">' . $pricetotal . '</span>';
         $cartOutputB .= '</div>';
 
-        $cartOutputB .= '<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 lg-offset-1  text-center">';
+        $cartOutputB .= '<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2  text-center">';
           $cartOutputB .= '<form action="cart.php" method="post">';
             $cartOutputB .= '<input class="btn btn-danger" name="deleteBtn' . $item_id . '" type="submit" value="X" />';
             $cartOutputB .= '<input name="index_to_remove" type="hidden" value="' . $i . '" />';
@@ -168,23 +168,8 @@ if (!isset($_SESSION["cart_array"]) || count($_SESSION["cart_array"]) < 1) {
     }
 	setlocale(LC_ALL, "fr_FR");
     //$cartTotal = money_format("%10.2n", $cartTotal);
-	$cartTotal = "<div style='font-size:1vw; margin-top:12px;' align='right'>Total Panier : ".$cartTotal."</div>";
+	$cartTotal = "<div style='margin-top:12px;' align='right'>Total Panier : ".$cartTotal."</div>";
 
-/*
-  $numberGenerator = mt_rand(1000,10000000000);
-
-      //genere la clé invoice de facon random
-      $chars = 'azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN0123456789';
-
-      $max = strlen($chars)-1;
-      $invoiceRandom = null;
-      for($i=0; $i < 15; $i++) {
-        $invoiceRandom .= $chars{mt_rand(0, $max)};
-      }
-
-      //Combination des deux nombres generes
-      $generatedInvoiceNumber=$numberGenerator.$invoiceRandom;
-*/
     // Finish the Paypal Checkout Btn
 	$pp_checkout_btn .= '<input type="hidden" name="custom" value="' . $product_id_array . '">
 	<input type="hidden" name="notify_url" value="http://pxo.t.proxylocal.com/storescripts/my_ipn.php">
@@ -204,11 +189,15 @@ if (!isset($_SESSION["cart_array"]) || count($_SESSION["cart_array"]) < 1) {
 
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Votre panier</title>
-    <link rel="stylesheet" href="style/style.css" type="text/css" media="screen" />
+
     <!-- Bootstrap Core CSS -->
     <link href="style/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="style/shop-homepage.css" rel="stylesheet">
+    <link href="style/style.css"  rel="stylesheet" media="screen" />
   </head>
 
   <body>
@@ -225,20 +214,22 @@ if (!isset($_SESSION["cart_array"]) || count($_SESSION["cart_array"]) < 1) {
 
                 <div class="row">
 
-                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 lg-offset-1  text-center"><span class="label label-default" style = "font-size: 1vw;">PRODUIT</span>
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3  text-center"><span class="label label-default" style = "">PRODUIT</span>
                     </div>
-                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1  text-center"><span class="label label-default" style = "font-size: 1vw;">PRIX</span>
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1  text-center"><span class="label label-default" style = "">PRIX</span>
                     </div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2  text-center"><span class="label label-default" style = "font-size: 1vw;">QUANTITE</span>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-3  text-center"><span class="label label-default" style = "">QUANTITE</span>
                     </div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2  text-center"><span class="label label-default" style = "font-size: 1vw;">TOTAL</span>
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1  text-center"><span class="label label-default" style = "">TOTAL</span>
                     </div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 lg-offset-1  text-center"><span class="label label-default" style = "font-size: 1vw;">RETIRER</span>
-                </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-2  text-center"><span class="label label-default" style = "">RETIRER</span>
+                    </div>
 
-            </div>
+                </div><!-- row -->
 
-          </div>
+            </div> <!-- container -->
+
+          </div><!-- cart-attributes -->
 
           <div id="cart-elements">
             <?php echo $cartOutputB; ?>
@@ -247,12 +238,12 @@ if (!isset($_SESSION["cart_array"]) || count($_SESSION["cart_array"]) < 1) {
           <div id="checkout-elements">
 
             <div class="row">
-              <div class="col-lg-6 text-center">
-                <a style="font-size: 1vw;" href="cart.php?cmd=emptycart">Cliquez ici pour vider le panier</a>
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                <a style="" href="cart.php?cmd=emptycart">Cliquez ici pour vider le panier</a>
               </div>
-              <div class="col-lg-6 text-center">
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
 
-                  <span class="badge" style = "font-size: 1vw;">
+                  <span class="badge" style = "">
                       <?php echo $cartTotal; ?>
                   </span>
 

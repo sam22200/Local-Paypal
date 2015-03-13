@@ -22,9 +22,10 @@
       }
 
       //Combination des deux nombres generes
+      $generatedInvoiceNumber = 0;
       $generatedInvoiceNumber=$numberGenerator.$invoiceRandom;
       //Sanitize
-      $generatedinvoicenumber=mysql_real_escape_string($generatedinvoicenumber);
+      $generatedInvoiceNumber=mysql_real_escape_string($generatedInvoiceNumber);
 
       //Check that the invoice number has not been used before
       //by comparing the generated numbers with those stored in MySQL database

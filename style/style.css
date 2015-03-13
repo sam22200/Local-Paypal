@@ -63,15 +63,31 @@ a:active {
 	padding-top: 70px;
 }
 
+@media all and (min-width: 1200px) { /* screen size until 1200px */
+    #pageContent span {
+        font-size: 2em; /* 1.5x default size */
+    }
+}
+
 @media all and (max-width: 1200px) { /* screen size until 1200px */
-    badge {
+    #pageContent span {
+        font-size: 1.8em; /* 1.5x default size */
     }
 }
 @media all and (max-width: 1000px) { /* screen size until 1000px */
-    badge {
+    #pageContent span {
+        font-size: 1.5em; /* 1.2x default size */
         }
     }
+
+@media all and (max-width: 700) { /* screen size until 500px */
+    #pageContent span {
+        font-size: 1.2em; /* 0.8x default size */
+        }
+    }
+
 @media all and (max-width: 500px) { /* screen size until 500px */
-    badge {
+    #pageContent span {
+        font-size: 0.8em; /* 0.8x default size */
         }
     }
