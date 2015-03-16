@@ -8,6 +8,8 @@ date_default_timezone_set('Europe/Paris');
 include "storescripts/connect_to_mysql.php";
 //Invoice generator number
 require_once "storescripts/invoice_number_generator.php";
+//Invoice generator number
+require_once "storescripts/compute_hmac.php";
 ?>
 <?php
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -171,18 +173,31 @@ if (!isset($_SESSION["cart_array"]) || count($_SESSION["cart_array"]) < 1) {
 	$cartTotal = "<div style='margin-top:12px;' align='right'>Total Panier : ".$cartTotal."</div>";
 
     // Finish the Paypal Checkout Btn
-	$pp_checkout_btn .= '<input type="hidden" name="custom" value="' . $product_id_array . '">
-	<input type="hidden" name="notify_url" value="http://pxo.t.proxylocal.com/storescripts/my_ipn.php">
-	<input type="hidden" name="return" value="http://pxo.t.proxylocal.com/checkout_complete.html">
-	<input type="hidden" name="rm" value="2">
-	<input type="hidden" name="cbt" value="Return to The Store">
-	<input type="hidden" name="cancel_return" value="http://pxo.t.proxylocal.com/paypal_cancel.html">
-	<input type="hidden" name="lc" value="FR">
-	<input type="hidden" name="currency_code" value="EUR">
-  <input type="hidden" name="invoice" value="'. invoiceNumber() .'">
-	<input type="image" src="http://www.paypal.com/en_US/i/btn/x-click-but01.gif" name="submit" alt="Make payments with PayPal - its fast, free and secure!">
-	</form>';
-}
+  	$pp_checkout_btn .= '<input type="hidden" name="custom" value="' . $product_id_array . '">
+  	<input type="hidden" name="notify_url" value="http://pxo.t.proxylocal.com/storescripts/my_ipn.php">
+  	<input type="hidden" name="return" value="http://pxo.t.proxylocal.com/checkout_complete.html">
+  	<input type="hidden" name="rm" value="2">
+  	<input type="hidden" name="cbt" value="Return to The Store">
+  	<input type="hidden" name="cancel_return" value="http://pxo.t.proxylocal.com/paypal_cancel.html">
+  	<input type="hidden" name="lc" value="FR">
+  	<input type="hidden" name="currency_code" value="EUR">
+    <input type="hidden" name="invoice" value="'. invoiceNumber() .'">
+  	<input type="image" src="http://www.paypal.com/en_US/i/btn/x-click-but01.gif" name="submit" alt="Make payments with PayPal - its fast, free and secure!">
+  	</form>';
+
+
+    $PBX_SITE = 1999888;
+    $PBX_RANG = 32;
+    $PBX_IDENTIFIANT = 110647233;
+    $PBX_TOTAL = $pricetotal;
+    $PBX_DEVISE = 978;
+    $PBX_CMD ="TEST Paybox";
+    $PBX_PORTEUR ="test@paybox.com";
+    $PBX_RETOUR ="Mt:M;Ref:R;Auto:A;Erreur:E";
+    $PBX_HASH ="SHA512";
+    $PBX_TIME = date("c");
+
+  }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//FR" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -250,7 +265,7 @@ if (!isset($_SESSION["cart_array"]) || count($_SESSION["cart_array"]) < 1) {
               </div>
             </div>
 
-          </div>
+          </div><!-- checkout-elements -->
 
           <div id="paypal-elements">
             <div class="container">
@@ -261,12 +276,39 @@ if (!isset($_SESSION["cart_array"]) || count($_SESSION["cart_array"]) < 1) {
                 </div>
               </div>
 
-            </div>
-          </div>
+            </div> <!-- container -->
+          </div><!-- paypal-elements -->
 
-        </div>
+          
+          <div id="paybox-elements">
+            <div class="container">
 
-      </div>
+              <div class="row text-center">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                  <form method="POST" action="https://preprod-tpeweb.paybox.com/cgi/MYchoix_pagepaiement.cgi">
+                    <input type="hidden" name="PBX_SITE" value="<?php echo $PBX_SITE; ?>">
+                    <input type="hidden" name="PBX_RANG" value="<?php echo $PBX_RANG; ?>">
+                    <input type="hidden" name="PBX_IDENTIFIANT" value="<?php echo $PBX_IDENTIFIANT; ?>">
+                    <input type="hidden" name="PBX_TOTAL" value="<?php echo $PBX_TOTAL; ?>">
+                    <input type="hidden" name="PBX_DEVISE" value="<?php echo $PBX_DEVISE; ?>">
+                    <input type="hidden" name="PBX_CMD" value="<?php echo $PBX_CMD; ?>">
+                    <input type="hidden" name="PBX_PORTEUR" value="<?php echo $PBX_PORTEUR; ?>">
+                    <input type="hidden" name="PBX_RETOUR" value="<?php echo $PBX_RETOUR; ?>">
+                    <input type="hidden" name="PBX_HASH" value="<?php echo $PBX_HASH; ?>">
+                    <input type="hidden" name="PBX_TIME" value="<?php echo $PBX_TIME; ?>">
+                    <input type="hidden" name="PBX_HMAC" value="<?php echo computeHmac($PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_TOTAL, $PBX_DEVISE ,$PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH, $PBX_TIME); ?>">
+                    <input type="submit" value="Payer">
+                  </form>
+                </div>
+              </div>
+
+            </div> <!-- container -->
+          </div><!-- paybox-elements -->
+
+
+        </div><!-- PageContent -->
+
+      </div> <!-- jumbotron -->
 
       <?php include_once("template_footer.php");?>
       <!-- jQuery -->
