@@ -5,11 +5,19 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 date_default_timezone_set('Europe/Paris');
 // Connect to the MySQL database
-include "storescripts/connect_to_mysql.php";
+require_once "storescripts/class_connexion.php";
+$connection = new createConnection();
+$connection->connectToDatabase();
+$connection->selectDatabase();
+
 //Invoice generator number
-require_once "storescripts/invoice_number_generator.php";
+require_once "storescripts/class_invoiceNumberPaypal.php";
+//Invoice generator number
+require_once "storescripts/class_invoiceNumberPaybox.php";
 //Invoice generator number
 require_once "storescripts/class_paybox.php";
+//Mobile Detect
+require_once "mobile_detect.php";
 ?>
 <?php
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -172,10 +180,13 @@ if ($isEmpty) {
 
 		$i++;
     }
+
 	setlocale(LC_ALL, "fr_FR");
   //$cartTotal = money_format("%10.2n", $cartTotal);
+  $cartTotalNumber = $cartTotal;
 	$cartTotal = "<div style='margin-top:12px;' align='right'>Total Panier : ".$cartTotal."</div>";
-    $inv = invoiceNumber();
+    $invoice = new invoiceNumberPaypal();
+    $inv = $invoice->getInvoiceNumber();
     // Finish the Paypal Checkout Btn
   	$pp_checkout_btn .= '<input type="hidden" name="custom" value="' . $product_id_array . '">
   	<input type="hidden" name="notify_url" value="http://pxo.t.proxylocal.com/storescripts/my_ipn.php">
@@ -189,9 +200,21 @@ if ($isEmpty) {
   	<input type="image" src="http://www.paypal.com/en_US/i/btn/x-click-but01.gif" name="submit" alt="Make payments with PayPal - its fast, free and secure!">
   	</form>';
 
+//PAYBOX BUTTONS
+    $productsList = "";
+    foreach ($_SESSION["cart_array"] as $each_item) {
+      $product_id = $each_item['item_id'];
+      $product_qte = $each_item['quantity'];
+      $productsList .= ",$product_id-".$product_qte;
+    }
+    $productsList = ltrim($productsList,',');
+    $invPbx = new invoiceNumberPaybox();
+    $invPbx->setListProduct($productsList);
+    $inv2 = $invPbx->getInvoiceNumber();
     // URL du serveur (ici la pre-production pour les tests)
     if (!$isEmpty){
-      $PAYBOX_DOMAIN_SERVER = "preprod-tpeweb.paybox.com";
+      $detect = new Mobile_Detect();
+      ($detect->isMobile()) ? $PAYBOX_DOMAIN_SERVER = "https://preprod-tpeweb.paybox.com/cgi/ChoixPaiementMobile.cgi" : $PAYBOX_DOMAIN_SERVER = "https://preprod-tpeweb.paybox.com/cgi/MYchoix_pagepaiement.cgi";
       $PBX_SITE = "1999888";
       $PBX_RANG = "32";
       $PBX_IDENTIFIANT = "1686319";
@@ -199,25 +222,26 @@ if ($isEmpty) {
       $PBX_ANNULE = "http://pxo.t.proxylocal.com/paypal_cancel.html";
       $PBX_TYPEPAIEMENT = "CARTE";
       $PBX_TYPECARTE = "VISA";
-      $PBX_TOTAL = $pricetotal*100;
+      $PBX_TOTAL = $cartTotalNumber*100;
       $PBX_DEVISE = 978;
-      $PBX_CMD = $inv;
+      $PBX_CMD = $inv2;
       $PBX_PORTEUR = "test@paybox.com";
-      $PBX_RETOUR = "montant:M;type:C;date:Q;ref:R;id:S;erreur:E;bin6:N;signature:K";
+      $PBX_RETOUR = "auto:A;montant:M;type:C;date:W;ref:R;id:S;erreur:E;bin6:N;signature:K";
       $PBX_HASH ="SHA512";
       $PBX_TIME = date("c");
-      $PBX_IMG = "inventory_images/visa_100.jpg";
+      $PBX_IMG = "inventory_images/visa_64.png";
 
       //HMAC DE TEST  0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF
       $myPbxVisaBtn = new Paybox($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE , $PBX_TOTAL, $PBX_DEVISE ,$PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH, $PBX_TIME, $PBX_IMG);
       $myPbxVisaStr = $myPbxVisaBtn->computePbxBtn();
       $PBX_TYPECARTE = "EUROCARD_MASTERCARD";
-      $PBX_IMG = "inventory_images/master_100.jpg";
+      $PBX_IMG = "inventory_images/master_64.png";
 
       $myPbxMasterBtn = new Paybox($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE , $PBX_TOTAL, $PBX_DEVISE ,$PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH, $PBX_TIME, $PBX_IMG);
       $myPbxMasterStr = $myPbxMasterBtn->computePbxBtn();
     }
   }
+//$connection->closeConnection();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//FR" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

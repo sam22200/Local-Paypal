@@ -88,7 +88,7 @@ class Paybox {
             $this->setPBX_HMAC();
         }
         $btn =
-        '<form method="POST" action="https://'.$this->PAYBOX_DOMAIN_SERVER.'/cgi/MYchoix_pagepaiement.cgi">
+        '<form method="POST" action="'.$this->PAYBOX_DOMAIN_SERVER.'">
                           <input type="hidden" name="PBX_SITE" value="'.$this->PBX_SITE.'">
                           <input type="hidden" name="PBX_RANG" value="'.$this->PBX_RANG.'">
                           <input type="hidden" name="PBX_IDENTIFIANT" value="'.$this->PBX_IDENTIFIANT.'">

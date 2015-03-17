@@ -1,7 +1,7 @@
 <?php
 require '../PHPMailer-master/PHPMailerAutoload.php'; //or select the proper destination for this file if your page is in some   //other folder
 
-ini_set("SMTP","ssl://smtp.gmail.com"); 
+ini_set("SMTP","ssl://smtp.gmail.com");
 ini_set("smtp_port","465"); //No further need to edit your configuration files.
 $mail = new PHPMailer();
 $mail->SMTPDebug = 1;
@@ -71,7 +71,12 @@ if ($_POST['payment_status'] != "Completed") {
 	// Handle how you think you should if a payment is not complete yet, a few scenarios can cause a transaction to be incomplete
 }
 // Connect to database ------------------------------------------------------------------------------------------------------
-require_once 'connect_to_mysql.php';
+// Connect to the MySQL database
+require_once "class_connexion.php";
+$connection = new createConnection();
+$connection->connectToDatabase();
+$connection->selectDatabase();
+
 // Check number 3 ------------------------------------------------------------------------------------------------------------
 
 
@@ -148,9 +153,6 @@ $invoice = $_POST['invoice'];
 $sql = mysql_query("INSERT INTO transactions (product_id_array, payer_email, first_name, last_name, payment_date, mc_gross, payment_currency, txn_id, receiver_email, payment_type, payment_status, txn_type, payer_status, address_street, address_city, address_state, address_zip, address_country, address_status, notify_version, verify_sign, payer_id, mc_currency, mc_fee, invoiceNumber)
    VALUES('$custom','$payer_email','$first_name','$last_name','$payment_date','$mc_gross','$payment_currency','$txn_id','$receiver_email','$payment_type','$payment_status','$txn_type','$payer_status','$address_street','$address_city','$address_state','$address_zip','$address_country','$address_status','$notify_version','$verify_sign','$payer_id','$mc_currency','$mc_fee','$invoice')") or die ("unable to execute the query");
 
-
-mysql_close();
-
 // Mail yourself the details
 //mail("samuel.coz@praxedo.com", "NORMAL IPN RESULT YAY MONEY!", $req, "From: PXO_SELL_1@seller.fr");
 $mail->Subject  = "NORMAL IPN RESULT YAY MONEY!";
@@ -179,4 +181,6 @@ echo  //Fill in the document.location thing
                         document.location = "/";
         </script>';
 }
+
+$connection->closeConnection();
 ?>

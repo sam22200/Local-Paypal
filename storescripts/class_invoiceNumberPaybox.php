@@ -1,13 +1,21 @@
 <?php
+  require_once 'i_invoiceNumberGenerator.php';
+  class invoiceNumberPaybox implements iInvoiceNumberGenerator {
 
-  //Since this is an included script, it needs to be protected with direct file access, so that the public users cannot just execute this script using a web browser
+    var $invoiceNumber;
+    var $listProducts;
+    var $finalStringComputed;
 
-  if ('invoice_number_generator.php' == basename($_SERVER['SCRIPT_FILENAME'])) {
-  die ('<h2>Direct File Access Prohibited</h2>');
-  }
-  else {
+    function __construct(){
+      $this->computeInvoiceNumber();
+    }
 
-    function invoiceNumber(){
+    protected function computeInvoiceNumber() {
+      // Connect to the MySQL database
+      require_once "class_connexion.php";
+      $connection = new createConnection();
+      $connection->connectToDatabase();
+      $connection->selectDatabase();
 
       //genere un numero d'invoice 1000 et 10000000000
       $numberGenerator = mt_rand(1000,10000000000);
@@ -35,10 +43,22 @@
         $generatedInvoiceNumber=$numberGenerator.$invoiceRandom;
       }
 
-      mysql_close();
+      $connection->closeConnection();
       //retourne le resultat
-      return $generatedInvoiceNumber;
+      $this->invoiceNumber = $generatedInvoiceNumber;
+    }
+
+    public function setListProduct($list){
+      $this->listProducts = $list;
+      $this->mergeString();
+    }
+
+    protected function mergeString(){
+      $this->finalStringComputed = "$this->listProducts|".$this->invoiceNumber;
+    }
+
+    public function getInvoiceNumber(){
+      return $this->finalStringComputed;
     }
 }
-
 ?>

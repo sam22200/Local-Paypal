@@ -7,7 +7,10 @@ date_default_timezone_set('Europe/Paris');
 <?php
 // Run a select query to get my letest 6 items
 // Connect to the MySQL database
-include "storescripts/connect_to_mysql.php";
+require_once "storescripts/class_connexion.php";
+$connection = new createConnection();
+$connection->connectToDatabase();
+$connection->selectDatabase();
 
 $dynamicList = "";
 $sql = mysql_query("SELECT * FROM products ORDER BY date_added DESC LIMIT 3");
@@ -45,9 +48,8 @@ if ($productCount > 0) {
 }
 
 
-mysql_close();
+$connection->closeConnection();
 ?>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//FR" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 

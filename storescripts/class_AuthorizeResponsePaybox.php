@@ -2,6 +2,7 @@
 
 class AuthorizeResponsePaybox {
 
+  private $auto;
   private $montant;
   private $type;
   private $date;
@@ -10,75 +11,91 @@ class AuthorizeResponsePaybox {
   private $erreur;
   private $bin6;
   private $signature;
+  private $list;
 
+  //Construit l'objet AuthorizeResponsePaybox
   public function __construct($data) {
-        parse_str($data, $output);
+      //Affectation de ses attributs
+      parse_str($data, $output);
 
-        if (empty($output['signature'])){
-          throw new Exception("Signature non présente.");
-        }
-        $this->signature = $output['signature'];
+      if (empty($output['signature'])){
+        throw new Exception("Signature non présente.");
+      }
+      $this->signature = $output['signature'];
 
-        if (!$this->verifySignature()) {
-         throw new Exception('Mauvaise Signature de la réponse.');
-        }
+      //Verification de la signature (etape nécessaire)
+      if (!$this->verifySignature()) {
+       throw new Exception('Mauvaise Signature de la réponse.');
+      }
 
-        if (empty($output['erreur'])){
-          throw new Exception("Code erreur non transmis.");
-        }
-        $this->erreur = $output['erreur'];
+      if (empty($output['auto'])){
+        throw new Exception("Code auto non transmis.");
+      }
+      $this->auto = $output['auto'];
 
-        if (empty($output['montant'])){
-          throw new Exception("Code montant non transmis.");
-        }
-        $this->montant = $output['montant'];
+      if (empty($output['erreur'])){
+        throw new Exception("Code erreur non transmis.");
+      }
+      $this->erreur = $output['erreur'];
 
-        if (empty($output['type'])){
-          throw new Exception("Code type non transmis.");
-        }
-        $this->type = $output['type'];
+      if (empty($output['montant'])){
+        throw new Exception("Code montant non transmis.");
+      }
+      $this->montant = $output['montant'];
 
-        if (empty($output['date'])){
-          throw new Exception("Code date non transmis.");
-        }
-        $this->date = $output['date'];
+      if (empty($output['type'])){
+        throw new Exception("Code type non transmis.");
+      }
+      $this->type = $output['type'];
 
-        if (empty($output['ref'])){
-          throw new Exception("Code ref non transmis.");
-        }
-        $this->ref = $output['ref'];
+      if (empty($output['date'])){
+        throw new Exception("Code date non transmis.");
+      }
+      $this->date = $output['date'];
 
-        if (empty($output['id'])){
-          throw new Exception("Code id non transmis.");
-        }
-        $this->id = $output['id'];
+      if (empty($output['ref'])){
+        throw new Exception("Code ref non transmis.");
+      }
+      $arrStr = explode( '|' , $output['ref']);
+      $this->ref = $arrStr[1];
+      $this->list = $arrStr[0];
 
-        if (empty($output['bin6'])){
-          throw new Exception("Code bin6 non transmis.");
-        }
-        $this->bin6 = $output['bin6'];
+      if (empty($output['id'])){
+        throw new Exception("Code id non transmis.");
+      }
+      $this->id = $output['id'];
+
+      if (empty($output['bin6'])){
+        throw new Exception("Code bin6 non transmis.");
+      }
+      $this->bin6 = $output['bin6'];
   }
 
+  //Retourne l'id de la transaction PayBox
   public function getTransactionReference()
   {
-      return isset($this->id) ? $this->id : null;
+    return isset($this->id) ? $this->id : null;
   }
 
+  //Retourne vrai si le code erreur est "00000"
   public function isSuccessful() {
     return isset($this->erreur) && '00000' === $this->erreur;
   }
 
+  //Retourne message d'eereur si la transaction est invalide
   public function getMessage()
   {
     return !$this->isSuccessful() ? 'Transaction Erronnée' : null;
   }
 
+  //Chemin de la clé publique
   protected function getPublicKey()
   {
     return  __DIR__ . '/../config/pubkey.pem';
   }
 
-public function verifySignature() {
+  //Vérifie la signature
+  protected function verifySignature() {
     //Récupere les parametres
     $url = parse_url($_SERVER['REQUEST_URI']);
     $vars = $url['query'];
@@ -112,12 +129,79 @@ public function verifySignature() {
     }
 
     return false;
-}
+  }
 
+  //Retourne le montant de la transaction
   public function getAmount()
   {
     return $this->montant;
   }
+
+  //Retourne le montant de la transaction
+  public function getRef()
+  {
+    return $this->ref;
+  }
+
+  //Retourne le montant de la transaction
+  public function getList()
+  {
+    return $this->list;
+  }
+
+  //Verifie la cohérence du montant en fonction de la liste de produit
+  protected function checkAmount(){
+      // Connect to the MySQL database
+      require_once "class_connexion.php";
+      $connection = new createConnection();
+      $connection->connectToDatabase();
+      $connection->selectDatabase();
+
+      //Scinde la string des produits en Code et Qte
+/*      $str = "413-4,414-5";
+      $arrP = explode(',',$str);
+
+      $i = 0;
+      foreach($arrP as $p){
+        $arr_tmp = explode('-',$p);
+        $arr2[$i] = $arr_tmp;
+        $i = $i+1;
+      }
+
+      $somme = 0;
+      $i = 0;
+      foreach($arr2 as $pr){
+        $somme += $pr[0] * $pr[1];
+        echo $pr[0] * $pr[1];
+        echo "*";
+        echo $pr[1];
+        echo "|+|";
+        
+        $i = $i+1;
+      }
+
+      echo $somme;*/
+      //Calcul la somme
+
+      //Compare la somme avec le montant
+
+      //Décision
+  }
+
+  //Stocke en base les informations
+  public function storeTransac(){
+      // Connect to the MySQL database
+      require_once "class_connexion.php";
+      $connection = new createConnection();
+      $connection->connectToDatabase();
+      $connection->selectDatabase();
+
+      //Insert les valeurs en BASE
+      $query="INSERT INTO transactions (product_id_array, mc_gross, txn_id, payment_date, payment_type, payment_status, invoiceNumber, address_zip) values('$this->list', '$this->montant', '$this->ref', '$this->date', '$this->type', 'OK', '$this->ref', '$this->bin6')";
+      mysql_query($query)  or die(mysql_error());
+
+  }
+
 
 }
 ?>

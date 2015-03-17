@@ -8,7 +8,11 @@ date_default_timezone_set('Europe/Paris');
 // Check to see the URL variable is set and that it exists in the database
 if (isset($_GET['id'])) {
 	// Connect to the MySQL database
-    include "storescripts/connect_to_mysql.php";
+  require_once "storescripts/class_connexion.php";
+  $connection = new createConnection();
+  $connection->connectToDatabase();
+  $connection->selectDatabase();
+
 	$id = preg_replace('#[^0-9]#i', '', $_GET['id']);
 	// Use this var to check to see if this ID exists, if yes then get the product
 	// details, if no then exit this script and give message why
@@ -34,7 +38,7 @@ if (isset($_GET['id'])) {
 	echo "Data to render this page is missing.";
 	exit();
 }
-mysql_close();
+$connection->closeConnection();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

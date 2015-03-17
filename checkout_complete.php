@@ -2,10 +2,19 @@
 if ($_SERVER['REQUEST_METHOD'] != "GET") die ("No Passed Variables");
 
 require_once 'storescripts/class_AuthorizeResponsePaybox.php';
+// Connect to the MySQL database
+require_once "storescripts/class_connexion.php";
+$connection = new createConnection();
+$connection->connectToDatabase();
+$connection->selectDatabase();
 
 try {
     $arp = new AuthorizeResponsePaybox($_SERVER['QUERY_STRING']);
     $valid = $arp->isSuccessful();
+    if ($valid){
+        $arp->storeTransac();
+        //$valid = $arp->getAmount();
+    }
 } catch (Exception $e) {
     echo 'Exception reçue : ',  $e->getMessage(), "\n";
 }
