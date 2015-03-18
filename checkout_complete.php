@@ -1,4 +1,9 @@
 <?php
+
+session_start();
+session_unset();
+session_destroy();
+
 if ($_SERVER['REQUEST_METHOD'] != "GET") die ("No Passed Variables");
 
 require_once 'storescripts/class_AuthorizeResponsePaybox.php';
@@ -13,7 +18,12 @@ try {
     $valid = $arp->isSuccessful();
     if ($valid){
         $arp->storeTransac();
-        //$valid = $arp->getAmount();
+
+        if ($somme = $arp->computeChecks()){
+            $valid =  "Tout est Cohérent !";
+        }else {
+            $valid =  "Tout  NON Cohérent !";
+        }
     }
 } catch (Exception $e) {
     echo 'Exception reçue : ',  $e->getMessage(), "\n";

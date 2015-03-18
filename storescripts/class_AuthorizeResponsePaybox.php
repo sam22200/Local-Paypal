@@ -134,19 +134,19 @@ class AuthorizeResponsePaybox {
   //Retourne le montant de la transaction
   public function getAmount()
   {
-    return $this->montant;
+    return isset($this->montant) ? $this->montant : null;
   }
 
   //Retourne le montant de la transaction
   public function getRef()
   {
-    return $this->ref;
+    return isset($this->ref) ? $this->ref : null;
   }
 
   //Retourne le montant de la transaction
   public function getList()
   {
-    return $this->list;
+    return isset($this->list) ? $this->list : null;
   }
 
   //Verifie la cohérence du montant en fonction de la liste de produit
@@ -158,48 +158,78 @@ class AuthorizeResponsePaybox {
       $connection->selectDatabase();
 
       //Scinde la string des produits en Code et Qte
-/*      $str = "413-4,414-5";
+      $str = $this->list;
       $arrP = explode(',',$str);
-
       $i = 0;
       foreach($arrP as $p){
         $arr_tmp = explode('-',$p);
         $arr2[$i] = $arr_tmp;
         $i = $i+1;
       }
-
-      $somme = 0;
+      //Calcule la somme
+      $sommePbx = $this->getAmount()/100;
+      //Compare la somme avec le montant
       $i = 0;
+      $sommeTh = 0;
       foreach($arr2 as $pr){
-        $somme += $pr[0] * $pr[1];
-        echo $pr[0] * $pr[1];
-        echo "*";
-        echo $pr[1];
-        echo "|+|";
-        
+        $sql = mysql_query("SELECT price FROM products WHERE id='$pr[0]' LIMIT 1");
+        while($row = mysql_fetch_array($sql)){
+          $p_price = $row["price"];
+        }
+        $sommeTh += $p_price*$pr[1];
         $i = $i+1;
       }
-
-      echo $somme;*/
-      //Calcul la somme
-
-      //Compare la somme avec le montant
-
       //Décision
+      if ($sommePbx == $sommeTh){
+        return true;
+      } else {
+        return false;
+      }
+  }
+
+  //Check si le membre 'Auto' est alpha-numérique
+  public function checkAuto(){
+    return ctype_alnum($this->auto);
+  }
+
+  public function computeChecks(){
+    $res = false;
+    if ($this->isSuccessful()){
+      if ($this->checkAmount()){
+        if ($this->checkAuto()){
+          $res = true;
+        } else {
+          $res = false;
+          throw new Exception("Auto n'est pas Alphanumérique !");
+        }
+      } else {
+        $res = false;
+        throw new Exception("Le montant n'est pas cohérent !");
+      }
+    } else {
+      $res = false;
+      throw new Exception("Le code de retour n'est pas bon !");
+    }
+    return $res;
   }
 
   //Stocke en base les informations
   public function storeTransac(){
-      // Connect to the MySQL database
-      require_once "class_connexion.php";
-      $connection = new createConnection();
-      $connection->connectToDatabase();
-      $connection->selectDatabase();
+    if (!$this->computeChecks()){
+      return false;
+    }
+    // Connect to the MySQL database
+    require_once "class_connexion.php";
+    $connection = new createConnection();
+    $connection->connectToDatabase();
+    $connection->selectDatabase();
 
-      //Insert les valeurs en BASE
-      $query="INSERT INTO transactions (product_id_array, mc_gross, txn_id, payment_date, payment_type, payment_status, invoiceNumber, address_zip) values('$this->list', '$this->montant', '$this->ref', '$this->date', '$this->type', 'OK', '$this->ref', '$this->bin6')";
-      mysql_query($query)  or die(mysql_error());
+    //Insert les valeurs en BASE
+    $price = $this->montant/100;
+    $query="INSERT INTO transactions (product_id_array, mc_gross, txn_id, payment_date, payment_type, payment_status, invoiceNumber, address_zip) values('$this->list', '$price', '$this->ref', '$this->date', '$this->type', 'OK', '$this->ref', '$this->bin6')";
+    mysql_query($query)  or die(mysql_error());
 
+    return true;
   }
 
 
