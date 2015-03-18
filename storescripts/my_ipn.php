@@ -181,6 +181,5 @@ echo  //Fill in the document.location thing
                         document.location = "/";
         </script>';
 }
-
 $connection->closeConnection();
 ?>

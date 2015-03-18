@@ -4,6 +4,10 @@ session_start(); // Start session first thing in script
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 date_default_timezone_set('Europe/Paris');
+
+//User class
+include( 'storescripts/class_user.php' );
+$user = new User();
 // Connect to the MySQL database
 require_once "storescripts/class_connexion.php";
 $connection = new createConnection();
@@ -218,11 +222,13 @@ if ($isEmpty) {
       $PBX_SITE = "1999888";
       $PBX_RANG = "32";
       $PBX_IDENTIFIANT = "1686319";
-      $PBX_EFFECTUE = "http://pxo.t.proxylocal.com/checkout_complete.php";
+      $PBX_EFFECTUE = "http://pxo.t.proxylocal.com/checkout_complete_paybox.php";
+      $PBX_REPONDRE_A = "pxo.t.proxylocal.com%2Fstorescripts%2Fipn_paybox.php";
       $PBX_ANNULE = "http://pxo.t.proxylocal.com/paypal_cancel.html";
       $PBX_TYPEPAIEMENT = "CARTE";
       $PBX_TYPECARTE = "VISA";
       $PBX_TOTAL = $cartTotalNumber*100;
+      ($detect->isMobile()) ? $PBX_SOURCE = "XHTML" : $PBX_SOURCE = "HTML";
       $PBX_DEVISE = 978;
       $PBX_CMD = $inv2;
       $PBX_PORTEUR = "test@paybox.com";
@@ -232,15 +238,48 @@ if ($isEmpty) {
       $PBX_IMG = "inventory_images/visa_64.png";
 
       //HMAC DE TEST  0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF
-      $myPbxVisaBtn = new Paybox($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE , $PBX_TOTAL, $PBX_DEVISE ,$PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH, $PBX_TIME, $PBX_IMG);
+      $myPbxVisaBtn = new Paybox($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE , $PBX_TOTAL, $PBX_SOURCE, $PBX_DEVISE ,$PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH, $PBX_TIME, $PBX_IMG);
       $myPbxVisaStr = $myPbxVisaBtn->computePbxBtn();
       $PBX_TYPECARTE = "EUROCARD_MASTERCARD";
       $PBX_IMG = "inventory_images/master_64.png";
 
-      $myPbxMasterBtn = new Paybox($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE , $PBX_TOTAL, $PBX_DEVISE ,$PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH, $PBX_TIME, $PBX_IMG);
+      $myPbxMasterBtn = new Paybox($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE , $PBX_TOTAL, $PBX_SOURCE, $PBX_DEVISE ,$PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH, $PBX_TIME, $PBX_IMG);
       $myPbxMasterStr = $myPbxMasterBtn->computePbxBtn();
     }
   }
+$payment_str = "";
+if( $user->isLoggedIn() ){
+$payment_str .= '<div id="paybox-elements">
+            <div class="container"><!-- container PBX Visa-->
+              <div class="row text-center">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">'.$myPbxVisaStr.'
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">'.$myPbxMasterStr.'
+                </div>
+              </div>
+            </div> <!-- /container -->
+          <div id="paypal-elements">
+            <div class="container">
+
+              <div class="row text-center">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">'.$pp_checkout_btn.'
+                </div>
+              </div>
+
+            </div> <!-- container -->
+          </div><!-- /paypal-elements -->
+
+
+        </div><!-- /PageContent -->';
+} else {
+$payment_str .= '<div class = "row">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-3 text-center">';
+$payment_str .= '<div class="alert alert-info" role="alert">IL FAUT VOUS LOGGER AFIN DE PROCEDER A L ACHAT ... </br></br>Pour vous identifier, cliquez <a href="signin.php">ici</a></br> Désirez vous créer un <a href="register.php">compte</a></div>';
+$payment_str .= '</div>';
+$payment_str .= '</div>';
+
+}
+
 //$connection->closeConnection();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//FR" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -311,33 +350,7 @@ if ($isEmpty) {
 
           </div><!-- checkout-elements -->
 
-          <div id="paybox-elements">
-            <div class="container"><!-- container PBX Visa-->
-
-              <div class="row text-center">
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
-                    <?php echo $myPbxVisaStr; ?>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
-                    <?php echo $myPbxMasterStr; ?>
-                </div>
-              </div>
-
-            </div> <!-- /container -->
-
-          </div><!-- /paybox-elements -->
-
-          <div id="paypal-elements">
-            <div class="container">
-
-              <div class="row text-center">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
-                  <?php echo $pp_checkout_btn; ?>
-                </div>
-              </div>
-
-            </div> <!-- container -->
-          </div><!-- /paypal-elements -->
+          <?php echo $payment_str; ?>
 
 
         </div><!-- /PageContent -->

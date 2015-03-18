@@ -10,6 +10,7 @@ class Paybox {
     protected $PBX_TYPEPAIEMENT;
     protected $PBX_TYPECARTE;
     protected $PBX_TOTAL;
+    protected $PBX_SOURCE;
     protected $PBX_DEVISE;
     protected $PBX_CMD;
     protected $PBX_PORTEUR;
@@ -20,7 +21,7 @@ class Paybox {
     protected $PBX_IMG;
 
 
-    public function __construct($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE, $PBX_TOTAL, $PBX_DEVISE, $PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH,  $PBX_TIME, $PBX_IMG){
+    public function __construct($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE, $PBX_TOTAL, $PBX_SOURCE, $PBX_DEVISE, $PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH,  $PBX_TIME, $PBX_IMG){
         $this->PAYBOX_DOMAIN_SERVER = $PAYBOX_DOMAIN_SERVER;
         $this->PBX_SITE = $PBX_SITE;
         $this->PBX_RANG = $PBX_RANG;
@@ -30,6 +31,7 @@ class Paybox {
         $this->PBX_TYPEPAIEMENT = $PBX_TYPEPAIEMENT;
         $this->PBX_TYPECARTE = $PBX_TYPECARTE;
         $this->PBX_TOTAL = $PBX_TOTAL;
+        $this->PBX_SOURCE = $PBX_SOURCE;
         $this->PBX_DEVISE = $PBX_DEVISE;
         $this->PBX_CMD = $PBX_CMD;
         $this->PBX_PORTEUR = $PBX_PORTEUR;
@@ -49,6 +51,7 @@ class Paybox {
         "&PBX_RANG=$this->PBX_RANG".
         "&PBX_IDENTIFIANT=$this->PBX_IDENTIFIANT".
         "&PBX_TOTAL=$this->PBX_TOTAL".
+        "&PBX_SOURCE=$this->PBX_SOURCE".
         "&PBX_DEVISE=$this->PBX_DEVISE".
         "&PBX_CMD=$this->PBX_CMD".
         "&PBX_EFFECTUE=$this->PBX_EFFECTUE".
@@ -93,6 +96,7 @@ class Paybox {
                           <input type="hidden" name="PBX_RANG" value="'.$this->PBX_RANG.'">
                           <input type="hidden" name="PBX_IDENTIFIANT" value="'.$this->PBX_IDENTIFIANT.'">
                           <input type="hidden" name="PBX_TOTAL" value="'.$this->PBX_TOTAL.'">
+                          <input type="hidden" name="PBX_SOURCE" value="'.$this->PBX_SOURCE.'">
                           <input type="hidden" name="PBX_DEVISE" value="'.$this->PBX_DEVISE.'">
                           <input type="hidden" name="PBX_CMD" value="'.$this->PBX_CMD.'">
                           <input type="hidden" name="PBX_EFFECTUE" value="'.$this->PBX_EFFECTUE.'">
