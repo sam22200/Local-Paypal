@@ -63,6 +63,9 @@ if (!isset($_SESSION["cart_array"]) || count($_SESSION["cart_array"]) < 1) {
                     <li>
                         <a href="#">Contact</a>
                     </li>
+                    <li>
+                        <a href="members.php"><span class="glyphicon glyphicon-user"></span> Compte</a>
+                    </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
