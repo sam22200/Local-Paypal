@@ -16,6 +16,19 @@ if(!isset($_SESSION))
     }
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
+
+
+require_once( 'storescripts/class_user.php' );
+
+$user = new User();
+
+if( !$user->isLoggedIn() ){
+  $compte_str= "Compte";
+} else {
+  $info = $user->userInfo($_SESSION['userName']);
+  $compte_str = $info['username'];
+}
+
 ?>
 
 <?php
@@ -30,6 +43,7 @@ if (!isset($_SESSION["cart_array"]) || count($_SESSION["cart_array"]) < 1) {
     }
     $BadgeOutput = '<span class="badge">' . $countQte . '</span>';
 }
+
 ?>
 
     <!-- Navigation -->
@@ -43,7 +57,7 @@ if (!isset($_SESSION["cart_array"]) || count($_SESSION["cart_array"]) < 1) {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">PRAXEDO</a>
+                <a class="navbar-brand" href="index.php">PRAXEDO</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -64,7 +78,7 @@ if (!isset($_SESSION["cart_array"]) || count($_SESSION["cart_array"]) < 1) {
                         <a href="#">Contact</a>
                     </li>
                     <li>
-                        <a href="members.php"><span class="glyphicon glyphicon-user"></span> Compte</a>
+                        <a href="members.php"><span class="glyphicon glyphicon-user"></span> <?php echo $compte_str;?></a>
                     </li>
                 </ul>
             </div>

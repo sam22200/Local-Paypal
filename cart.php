@@ -204,6 +204,10 @@ if ($isEmpty) {
   	<input type="image" src="http://www.paypal.com/en_US/i/btn/x-click-but01.gif" name="submit" alt="Make payments with PayPal - its fast, free and secure!">
   	</form>';
 
+  }
+
+$payment_str = "";
+if( $user->isLoggedIn() && !$isEmpty){
 //PAYBOX BUTTONS
     $productsList = "";
     foreach ($_SESSION["cart_array"] as $each_item) {
@@ -246,9 +250,7 @@ if ($isEmpty) {
       $myPbxMasterBtn = new Paybox($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE , $PBX_TOTAL, $PBX_SOURCE, $PBX_DEVISE ,$PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH, $PBX_TIME, $PBX_IMG);
       $myPbxMasterStr = $myPbxMasterBtn->computePbxBtn();
     }
-  }
-$payment_str = "";
-if( $user->isLoggedIn() ){
+
 $payment_str .= '<div id="paybox-elements">
             <div class="container"><!-- container PBX Visa-->
               <div class="row text-center">
@@ -272,12 +274,13 @@ $payment_str .= '<div id="paybox-elements">
 
         </div><!-- /PageContent -->';
 } else {
-$payment_str .= '<div class = "row">
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-3 text-center">';
-$payment_str .= '<div class="alert alert-info" role="alert">IL FAUT VOUS LOGGER AFIN DE PROCEDER A L ACHAT ... </br></br>Pour vous identifier, cliquez <a href="signin.php">ici</a></br> Désirez vous créer un <a href="register.php">compte</a></div>';
-$payment_str .= '</div>';
-$payment_str .= '</div>';
-
+  if ( !$user->isLoggedIn()){
+    $payment_str .= '<div class = "row">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-3 text-center">';
+    $payment_str .= '<div class="alert alert-info" role="alert">IL FAUT VOUS LOGGER AFIN DE PROCEDER A L ACHAT ... </br></br>Pour vous identifier, cliquez <a href="signin.php">ici</a></br> Désirez vous créer un <a href="register.php">compte</a></div>';
+    $payment_str .= '</div>';
+    $payment_str .= '</div>';
+  }
 }
 
 //$connection->closeConnection();

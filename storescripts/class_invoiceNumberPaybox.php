@@ -5,9 +5,26 @@
     var $invoiceNumber;
     var $listProducts;
     var $finalStringComputed;
+    var $username;
 
     function __construct(){
       $this->computeInvoiceNumber();
+
+      require_once( 'class_user.php' );
+      $user = new User();
+
+      if( !$user->isLoggedIn() ){
+        $user->redirectTo('signin');
+      } else {
+        $info = $user->userInfo($_SESSION['userName']);
+      }
+
+      $uid = $info['id'];
+      $this->setUsername($uid);
+    }
+
+    protected function setUsername($str){
+      $this->username = $str;
     }
 
     protected function computeInvoiceNumber() {
@@ -54,7 +71,8 @@
     }
 
     protected function mergeString(){
-      $this->finalStringComputed = "$this->listProducts|".$this->invoiceNumber;
+      $this->finalStringComputed = "$this->username|";
+      $this->finalStringComputed .= "$this->listProducts|".$this->invoiceNumber;
     }
 
     public function getInvoiceNumber(){

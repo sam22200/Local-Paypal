@@ -12,6 +12,7 @@ class AuthorizeResponsePaybox {
   private $bin6;
   private $signature;
   private $list;
+  private $username;
 
   //Construit l'objet AuthorizeResponsePaybox
   public function __construct($data) {
@@ -57,8 +58,9 @@ class AuthorizeResponsePaybox {
         throw new Exception("Code ref non transmis.");
       }
       $arrStr = explode( '|' , $output['ref']);
-      $this->ref = $arrStr[1];
-      $this->list = $arrStr[0];
+      $this->ref = $arrStr[2];
+      $this->list = $arrStr[1];
+      $this->username = $arrStr[0];
 
       if (empty($output['id'])){
         throw new Exception("Code id non transmis.");
@@ -135,6 +137,12 @@ class AuthorizeResponsePaybox {
   public function getAmount()
   {
     return isset($this->montant) ? $this->montant : null;
+  }
+
+  //Retourne le montant de la transaction
+  public function getUsername()
+  {
+    return isset($this->username) ? $this->username : null;
   }
 
   //Retourne le montant de la transaction

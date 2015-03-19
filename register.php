@@ -31,7 +31,7 @@ if( isset( $_POST['username'] ) ){
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign up</title>
+    <title>Enregistrement</title>
 
 
     <!-- Bootstrap Core CSS -->

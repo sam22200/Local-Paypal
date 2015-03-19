@@ -6,9 +6,13 @@ include( 'storescripts/class_user.php' );
 
 $user = new User();
 
-if( isset( $_GET['read'] ) ){
-  $message_id = mysql_real_escape_string( $_GET['read'] );
+if( !$user->isLoggedIn() ){
+  $user->redirectTo('signin');
+} else {
+  $info = $user->userInfo($_SESSION['userName']);
 }
+
+
 ?>
 
 
@@ -49,30 +53,24 @@ if( isset( $_GET['read'] ) ){
     <div id="mainWrapper">
       <?php include_once("template_header.php");?>
 
-
+<div class="jumbotron">
 
 			<div id="container">
-				<h1>Members Area</h1>
+				<p>Espace Membre</p>
 
-		<?php
-		if( $user->isLoggedIn() ){
-		  $login = $user->userInfo( $_SESSION['userName'] );
-
-		?>
 				<div class="row">
       <div class="col-md-5  toppad  pull-right col-md-offset-3 ">
-           <A href="edit.html" >Edit Profile</A>
+           <A href="edit.html" >Modifier Profil</A>
 
-        <A href="edit.html" >Logout</A>
+        <A href="logout.php" >[Déconnexion]</A>
        <br>
-<p class=" text-info">May 05,2014,03:00 pm </p>
       </div>
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
 
 
           <div class="panel panel-info">
             <div class="panel-heading">
-              <h3 class="panel-title">Sheena Kristin A.Eschor</h3>
+              <h3 class="panel-title"><?php echo $info['username']; ?></h3>
             </div>
             <div class="panel-body">
               <div class="row">
@@ -94,42 +92,42 @@ if( isset( $_GET['read'] ) ){
                   <table class="table table-user-information">
                     <tbody>
                       <tr>
-                        <td>Department:</td>
-                        <td>Programming</td>
+                        <td>Département:</td>
+                        <td>Développement</td>
                       </tr>
                       <tr>
-                        <td>Hire date:</td>
-                        <td>06/23/2013</td>
-                      </tr>
-                      <tr>
-                        <td>Date of Birth</td>
+                        <td>Date de Naissance</td>
                         <td>01/24/1988</td>
                       </tr>
 
                          <tr>
                              <tr>
-                        <td>Gender</td>
-                        <td>Male</td>
+                        <td>Sexe</td>
+                        <td>Homme</td>
                       </tr>
                         <tr>
-                        <td>Home Address</td>
-                        <td>Metro Manila,Philippines</td>
+                        <td>Adresse </td>
+                        <td>80 Rue du Taitbout, PARIS</td>
                       </tr>
                       <tr>
                         <td>Email</td>
-                        <td><a href="mailto:info@support.com">info@support.com</a></td>
+                        <td><a href="mailto:<?php isset($info['mail']) ? $email = $info['mail'] : $email = 'info@support.com'; echo $email; ?>"><?php echo $email;?></a></td>
                       </tr>
-                        <td>Phone Number</td>
-                        <td>123-4567-890(Landline)<br><br>555-4567-890(Mobile)
+                        <td>Numéro Téléphone</td>
+                        <td>01-33-79-40-20(Fixe)<br><br>06-81-50-46-54(Mobile)
                         </td>
+                      <tr>
+                        <td>Actif depuis le:</td>
+                        <td><?php echo date("Y-m-d H:i:s", $info['created_at']);?></td>
+                      </tr>
 
                       </tr>
 
                     </tbody>
                   </table>
 
-                  <a href="#" class="btn btn-primary">My Sales Performance</a>
-                  <a href="#" class="btn btn-primary">Team Sales Performance</a>
+                  <a href="#" class="btn btn-primary">Convertir mes achats</a>
+                  <a href="myorders.php" class="btn btn-primary">Mes achats</a>
                 </div>
               </div>
             </div>
@@ -144,27 +142,16 @@ if( isset( $_GET['read'] ) ){
           </div>
         </div>
       </div>
-				<div class="logout"><i><a href="logout.php">[Logout]</a><i></div>
+				<div class="logout"><i><a href="logout.php">[Déconnexion]</a><i></div>
 
-		<?php
-			} else {
-		?>
 
-					<div id="content">
-						<p class="description" style="margin-bottom:20px">
-							Erreur. Identifier vous <a href="signin.php" style="font-weight:bold;">ici.</a>
-						</p>
-					</div>
+			</div> <!--/Container -->
 
-		<?php
-		}
-		?>
 
-			</div>
-
+</div>
 
       <?php include_once("template_footer.php");?>
-    </div>
+    </div> <!-- /Main Wrapper -->
 
     <!-- members -->
     <script src="js/members.js"></script>

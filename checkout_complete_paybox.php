@@ -1,12 +1,18 @@
 <?php
 
 session_start();
-session_unset();
-session_destroy();
+unset($_SESSION["cart_array"]);
+
 
 if ($_SERVER['REQUEST_METHOD'] != "GET") die ("No Passed Variables");
 
+//Verifier la reponse de paybox et faire les inscriptions en BD
 require_once 'storescripts/class_AuthorizeResponsePaybox.php';
+//Inscription dans quantites
+require_once "storescripts/class_StoreQte.php";
+//Inscription dans orders
+require_once "storescripts/class_StoreOrders.php";
+
 // Connect to the MySQL database
 require_once "storescripts/class_connexion.php";
 $connection = new createConnection();
@@ -15,10 +21,13 @@ $connection->selectDatabase();
 
 try {
     $arp = new AuthorizeResponsePaybox($_SERVER['QUERY_STRING']);
-    $valid = $arp->isSuccessful();
-    if ($valid){
-        $arp->storeTransac();
+    if ($arp->storeTransac()){
+        $storeOrders = new StoreOrders($arp->getUsername(), $arp->getRef());
+        $storeOrders->storeInBase();
+        $storeQte = new StoreQte($arp->getUsername(), $arp->getList());
+        $storeQte->storeInBase();
 
+        $var = $storeQte->getQte413();
         if ($somme = $arp->computeChecks()){
             $valid =  "Tout est Cohérent !";
         }else {
@@ -28,7 +37,7 @@ try {
 } catch (Exception $e) {
     echo 'Exception reçue : ',  $e->getMessage(), "\n";
 }
-$file = fopen('testBon.txt', 'w+'); 
+
 ?>
 
 <!DOCTYPE html>
@@ -75,7 +84,7 @@ $file = fopen('testBon.txt', 'w+');
                             <span class="glyphicon glyphicon-ok" style="font-size:120px;text-align: center "></span>
 
                             <h1>Paiement Validé</VAR></h1>
-                            <h1>Paiment Valide (code erreur + signature)<?php echo $valid; ?></VAR></h1>
+                            <h1>Paiment Valide (code erreur + signature)<!-- *<?php echo $var; ?>* --></VAR></h1>
                             <p>Cliquez sur ce bouton pour revenir à l'accueil</p>
                             <a class="btn btn-lg btn-success" href="/" role="button">Retour Accueil</a>
                         </div>

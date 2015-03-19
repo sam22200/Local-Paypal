@@ -6,6 +6,6 @@
 </head>
 
 <body>
-Yes this is supposed to be empty like this... happy coding.
+A Faire ...
 </body>
 </html>

@@ -19,7 +19,7 @@ if( isset( $_SESSION['try'] ) ){
 
 if( isset( $_POST['username'] ) ){
   if( $user->verify( $_POST['username'] , $_POST['password'] ) ){
-    $user->setLoggedIn($_POST['username'], $_POST['password']); 
+    $user->setLoggedIn($_POST['username'], $_POST['password']);
     unset( $_SESSION['try'] );
     $user->redirectTo('cart');
   } else {
@@ -42,7 +42,7 @@ if( isset( $_POST['username'] ) ){
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login or Sign up</title>
+    <title>Identification</title>
 
 
     <!-- Bootstrap Core CSS -->
