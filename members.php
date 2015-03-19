@@ -126,7 +126,7 @@ if( !$user->isLoggedIn() ){
                     </tbody>
                   </table>
 
-                  <a href="#" class="btn btn-primary">Convertir mes achats</a>
+                  <a href="convertItems.php" class="btn btn-primary">Convertir mes achats</a>
                   <a href="myorders.php" class="btn btn-primary">Mes achats</a>
                 </div>
               </div>

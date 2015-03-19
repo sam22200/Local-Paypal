@@ -3,12 +3,12 @@
 session_start();
 date_default_timezone_set('Europe/Paris');
 require_once( 'storescripts/class_user.php' );
-
+/*
 // Connect to the MySQL database
 require_once "storescripts/class_connexion.php";
 $connection = new createConnection();
 $connection->connectToDatabase();
-$connection->selectDatabase();
+$connection->selectDatabase();*/
 
 $user = new User();
 
@@ -18,50 +18,53 @@ if( !$user->isLoggedIn() ){
   $info = $user->userInfo($_SESSION['userName']);
 }
 
+/// RETRIEVE DE LA BASE
+// Place db host name. Sometimes "localhost" but
+// sometimes looks like this: >>      ???mysql??.someserver.net
+$db_host = "127.0.0.1";
+// Place the username for the MySQL database here
+$db_username = "sam22200";
+// Place the password for the MySQL database here
+$db_pass = "22200sam";
+// Place the name for the MySQL database here
+$db_name = "transac";
+
+try {
+    $dbh = new PDO('mysql:host=127.0.0.1;dbname=transac', $db_username, $db_pass);
+
+$str = "";
+$str .= 'SELECT ref, payment_date, mc_gross from orders, transactions WHERE transactions.InvoiceNumber=orders.ref AND orders.username="'.$info['id'].'"';
+
+//echo $str;
+//echo "</br>";
+
+$orders = array();
+$i = 0;
+    foreach($dbh->query($str) as $row) {
+        $orders[$i] = $row;
+        $i++;
+    }
+
 $orders_str ='';
-
-  $q = sprintf( "SELECT username, ref FROM orders WHERE username='%s'" ,
-         mysql_real_escape_string( $info['id'] )
-       );
-  $r = mysql_query( $q );
-
-  if( !mysql_num_rows( $r ) ) {
-    $orders_str = "<tr>Pas encore d'achat...</tr>";
-  } else {
-    $orders = mysql_fetch_array( $r );
-
-    foreach($orders as $order){
-      $orders_str .='<tr>';
-      $orders_str .='<td>' . $order['ref'] . '</td>
-                        <td>'. date("Y-m-d H:i:s", $info['created_at']) .'</td>
-                        <td>100</td>
-                        <td><span class="label label-success"><a href="#">OUVRIR</a></span>
-                        </td>';
-      $orders_str .='</tr>';
-    }
+if (!$orders) {
+  $orders_str ='<tr><td>Aucun Achat ...</td></tr>';
+} else {
+  foreach($orders as $ach){
+        $orders_str .='<tr>';
+        $orders_str .='<td>' . $ach['ref'] . '</td>
+                          <td>'. date("Y-m-d H:i:s", $ach['payment_date']) .'</td>
+                          <td>'.$ach['mc_gross'].'</td>
+                          <td><span class="label label-success"><a href="#">OUVRIR</a></span>
+                          </td>';
+        $orders_str .='</tr>';
   }
+}
 
-
-/*  $q = sprintf( "SELECT * FROM users WHERE username='%s'" ,
-         mysql_real_escape_string( $info['username'] )
-       );
-  $r = mysql_query( $q );
-
-  if( !mysql_num_rows( $r ) ) {
-    $orders_str = "<tr>Pas encore d'achat...</tr>";
-  } else {
-    $orders = mysql_fetch_array( $r );
-
-    foreach($orders as $order){
-      $orders_str .='<tr>';
-      $orders_str .='<td>' . $info['username'].' '.$order['qte_413'] . '</td>
-                        <td>'. date('c') .'</td>
-                        <td>100</td>
-                        <td><span class="label label-success">OUVRIR</span>
-                        </td>';
-      $orders_str .='</tr>';
-    }
-  }*/
+    $dbh = null;
+} catch (PDOException $e) {
+    print "Erreur !: " . $e->getMessage() . "<br/>";
+    die();
+}
 ?>
 
 

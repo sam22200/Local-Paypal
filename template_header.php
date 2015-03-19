@@ -80,6 +80,9 @@ if (!isset($_SESSION["cart_array"]) || count($_SESSION["cart_array"]) < 1) {
                     <li>
                         <a href="members.php"><span class="glyphicon glyphicon-user"></span> <?php echo $compte_str;?></a>
                     </li>
+                    <li>
+                        <a href="debug.php">Debug</a>
+                    </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
