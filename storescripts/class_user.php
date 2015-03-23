@@ -31,7 +31,7 @@ class User {
     return $firstSalt;
   }
 
-  function register( $userName , $userPassword ){
+  function register( $userName , $email,  $userPassword ){
     // Connect to the MySQL database
     require_once "class_connexion.php";
     $connection = new createConnection();
@@ -44,21 +44,23 @@ class User {
     $salt = $this->salt(); //Generate a salt using the username provided
     $date = time();
     $password = $this->hash( $userPassword , $salt , $date ); //Hash the password with the new salt
-
     //The query for inserting our new user into the DB
-    $q1 = sprintf( "INSERT INTO users (username, password, rand, created_at) VALUES ('%s', '%s', '%s', '%s')" ,
+    $q1 = sprintf( "INSERT INTO users (username, password, rand, created_at, mail) VALUES ('%s', '%s', '%s', '%s', '%s')" ,
             mysql_real_escape_string( $userName ) ,
             mysql_real_escape_string( $password ) ,
             mysql_real_escape_string( $salt ) ,
-            mysql_real_escape_string( $date )
+            mysql_real_escape_string( $date ),
+            mysql_real_escape_string( $email )
           );
-    if( mysql_query( $q1 ) )
+    if( mysql_query( $q1 ) ){
       return mysql_insert_id();
+    } else {
     die( mysql_error() ); // Run it. If it doesn't go through stop the script and display the error.
     return false;
+    }
   }
 
-  function update( $userName , $oldPassword , $newPassword ){
+  function update( $userName , $email, $oldPassword , $newPassword ){
     // Connect to the MySQL database
     require_once "class_connexion.php";
     $connection = new createConnection();
@@ -82,7 +84,7 @@ class User {
               mysql_real_escape_string( $userName )
             );
       if( mysql_query( $q2 ) ){
-        setLoggedIn( $userName , $newPassword );
+        setLoggedIn( $userName , $email, $newPassword );
         return true;
       }
     }
@@ -105,17 +107,18 @@ class User {
     return ( $r1['password'] == $this->hash( $userPassword , $r1['rand'] , $r1['created_at'] ) );
   }
 
-  function setLoggedIn($userName, $userPassword) {
+  function setLoggedIn($userName, $email, $userPassword) {
     //This function is self explanitory :)
     $_SESSION['loggedIn'] = true;
     $_SESSION['userName'] = $userName;
+    $_SESSION['email'] = $email;
     $_SESSION['userPassword'] = $userPassword;
   }
 
   function isLoggedIn() {
     return ( isset( $_SESSION['loggedIn'] )
              && $_SESSION['loggedIn']
-             && $this->verify( $_SESSION['userName'] , $_SESSION['userPassword'] ) );
+             && $this->verify( $_SESSION['userName'], $_SESSION['userPassword'] ) );
   }
 
   function redirectTo($page) {
@@ -159,7 +162,7 @@ class User {
     // If they are logged in
     if( isset( $_SESSION['loggedIn'] ) ){
       // Unset the session variables
-      unset( $_SESSION['loggedIn'] , $_SESSION['userName'] , $_SESSION['userPassword'] );
+      unset( $_SESSION['loggedIn'] , $_SESSION['userName'] , $_SESSION['email'], $_SESSION['userPassword'] );
       // Redirect to the login page
       $this->redirectTo( '../cart' );
     }
@@ -207,75 +210,6 @@ class User {
     return $r1;
   }
 
-/*
-  function messageNotification( $UID ){
-    // Select all unread notifications
-    $q1 = sprintf( "SELECT * FROM messages WHERE message_to = '%s' AND message_read = '0'" ,
-            (int) $UID
-          );
-    $r1 = mysql_query( $q1 );
-    // Return the number
-    return mysql_num_rows( $r1 );
-  }
-
-  function displayMessages( $action , $UID , $ID=NULL ){
-    $where = false;
-
-    switch( $action ){
-      case 'list' :
-        $where = sprintf( "messages.message_to = %s ORDER BY messages.message_id DESC" ,
-                   (int) $UID
-                 );
-        break;
-      case 'read' :
-        $where = sprintf( "messages.message_id = %s" ,
-                   (int) $ID
-                 );
-    }
-    if( !$where )
-      return null;
-    $q = sprintf( "SELECT * FROM messages INNER JOIN users ON messages.message_from=users.id WHERE %s" ,
-           $where
-         );
-    $r = mysql_query( $q );
-    if( !mysql_num_rows( $r ) )
-      return false;
-    return $r;
-  }
-
-  function setMessageStatus( $messageID , $status ){
-    $q = sprintf( "UPDATE messages SET message_read = %s WHERE message_id = %s" ,
-            (int) $status ,
-            (int) $messageID
-         );
-    mysql_query( $q );
-  }
-
-  function setMessageUnread( $messageID ){
-    setMessageStatus( $messageID , 0 );
-  }
-  function setMessageRead( $messageID ){
-    setMessageStatus( $messageID , 1 );
-  }
-
-  function sendMessage( $to , $from , $subject , $message ){
-    $q = sprintf( "INSERT INTO messages (message_to, message_from, message_subject, message, message_read) VALUES ('%s', '%s', '%s', '%s', 0)" ,
-           mysql_real_escape_string( $to ) ,
-           mysql_real_escape_string( $from ) ,
-           mysql_real_escape_string( $subject ) ,
-           mysql_real_escape_string( $message )
-
-         );
-    return mysql_query( $q );
-  }
-
-  function deleteMessage( $messageID ){
-    $q = sprintf( "DELETE FROM messages WHERE message_id = '%s'" ,
-           (int) $messageID
-         );
-    return mysql_query( $q );
-  }
-*/
 
   function string_shorten( $text , $len ){
     // Strip any linebreaks or multiple-spaces

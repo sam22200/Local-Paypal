@@ -19,7 +19,7 @@ if( isset( $_SESSION['try'] ) ){
 
 if( isset( $_POST['username'] ) ){
   if( $user->verify( $_POST['username'] , $_POST['password'] ) ){
-    $user->setLoggedIn($_POST['username'], $_POST['password']);
+    $user->setLoggedIn($_POST['username'], $_POST['email'], $_POST['password']);
     unset( $_SESSION['try'] );
     $user->redirectTo('cart');
   } else {

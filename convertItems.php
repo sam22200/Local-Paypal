@@ -36,7 +36,7 @@ $color_b = array("danger", "primary", "success");
 $i = 0;
 $output_str = "";
 if (!$qte[0] && !$qte[1] && !$qte[2]){
-  $output_str .= "AUCUN JETON DISPONILBE...";
+  $output_str .= "AUCUN JETON DISPONIBLE...";
 } else {
   for($i = 0; $i <= 2; $i++){
     if ($qte[$i]){

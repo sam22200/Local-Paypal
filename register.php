@@ -9,9 +9,9 @@ if( $user->isLoggedIn() ){
   $user->redirectTo( 'cart' );
 }
 
-if( isset( $_POST['username'] ) ){
+if( isset( $_POST['username'] )  && $_POST['email'] != "" && $_POST['password'] != ""){
   // If register is successful.
-    if( $user->register( $_POST['username'] , $_POST['password'] ) ){
+    if( $user->register( $_POST['username'] , $_POST['email'], $_POST['password'] ) ){
         $message = 'Inscription effectuée ! Identifiez vous <a href="signin.php">ici</a>';
         $registered = TRUE;
     } else {
@@ -83,7 +83,7 @@ if( !isset( $registered ) ){
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="firstname" class="col-md-3 control-label">Nom utilisateur</label>
+                                    <label for="username" class="col-md-3 control-label">Nom utilisateur</label>
                                     <div class="col-md-9">
                                         <input type="text" class="form-control" name="username" placeholder="Username">
                                     </div>
