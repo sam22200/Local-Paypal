@@ -31,7 +31,7 @@ try {
         if ($somme = $arp->computeChecks()){
             $valid =  "Tout est Cohérent !";
         }else {
-            $valid =  "Tout  NON Cohérent !";
+            $valid =  "NON Cohérent !";
         }
     }
 } catch (Exception $e) {
@@ -86,6 +86,7 @@ try {
                             <h1>Paiement Validé</VAR></h1>
                             <h1>Paiment Valide (code erreur + signature)<!-- *<?php echo $var; ?>* --></VAR></h1>
                             <p>Cliquez sur ce bouton pour revenir à l'accueil</p>
+                            <a class="btn btn-lg btn-success" href="/convertItems.php" role="button">Convertir l'achat</a>
                             <a class="btn btn-lg btn-success" href="/" role="button">Retour Accueil</a>
                         </div>
                      </div>

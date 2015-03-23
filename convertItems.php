@@ -3,12 +3,6 @@
 session_start();
 date_default_timezone_set('Europe/Paris');
 require_once( 'storescripts/class_user.php' );
-/*
-// Connect to the MySQL database
-require_once "storescripts/class_connexion.php";
-$connection = new createConnection();
-$connection->connectToDatabase();
-$connection->selectDatabase();*/
 
 $user = new User();
 
@@ -18,55 +12,69 @@ if( !$user->isLoggedIn() ){
   $info = $user->userInfo($_SESSION['userName']);
 }
 
-/// RETRIEVE DE LA BASE
-// Place db host name. Sometimes "localhost" but
-// sometimes looks like this: >>      ???mysql??.someserver.net
-$db_host = "127.0.0.1";
-// Place the username for the MySQL database here
-$db_username = "sam22200";
-// Place the password for the MySQL database here
-$db_pass = "22200sam";
-// Place the name for the MySQL database here
-$db_name = "transac";
+// Connect to the MySQL database
+require_once "storescripts/class_connexion.php";
+$connection = new createConnection();
+$connection->connectToDatabase();
+$connection->selectDatabase();
 
-try {
-    $dbh = new PDO('mysql:host=127.0.0.1;dbname=transac', $db_username, $db_pass);
+$username = $info['username'];
 
-$str = "";
-$str .= 'SELECT ref, payment_date, mc_gross from orders, transactions WHERE transactions.InvoiceNumber=orders.ref AND orders.username="'.$info['id'].'"';
+$sql = mysql_query("SELECT qte_413, qte_414, qte_415 FROM users WHERE username='$username' LIMIT 1");
+$qte = array();
+while ($row = mysql_fetch_array($sql)) {
+  array_push($qte,$row["qte_413"]);
+  array_push($qte,$row["qte_414"]);
+  array_push($qte,$row["qte_415"]);
+  //$q414 = $row["qte_414"];
+  //$q415 = $row["qte_415"];
+}
 
-//echo $str;
-//echo "</br>";
-
-$orders = array();
+$ref = array("413", "414", "415");
+$color = array("red", "blue", "green");
+$color_b = array("danger", "primary", "success");
 $i = 0;
-    foreach($dbh->query($str) as $row) {
-        $orders[$i] = $row;
-        $i++;
-    }
-
-$orders_str ='';
-if (!$orders) {
-  $orders_str ='<tr><td>Aucun Achat ...</td></tr>';
+$output_str = "";
+if (!$qte[0] && !$qte[1] && !$qte[2]){
+  $output_str .= "AUCUN JETON DISPONILBE...";
 } else {
-  foreach($orders as $ach){
-        $orders_str .='<tr>';
-        $orders_str .='<td>' . $ach['ref'] . '</td>
-                          <td>'. date("Y-m-d H:i:s", $ach['payment_date']) .'</td>
-                          <td>'.$ach['mc_gross'].'</td>
-                          <td><span class="label label-success"><a href="#">OUVRIR</a></span>
-                          </td>';
-        $orders_str .='</tr>';
+  for($i = 0; $i <= 2; $i++){
+    if ($qte[$i]){
+      $output_str .= '<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+
+              <!-- PRICE ITEM -->
+              <div class="panel price panel-'.$color[$i].'">
+                <div class="panel-heading  text-center">
+                <h3>FORFAIT '. ($i+1)  . ' MOIS</h3>
+                </div>
+                <div class="panel-body text-center">
+                  <p class="lead" style="font-size:40px"><strong>€50 / Mois</strong></p>
+                </div>
+                <ul class="list-group list-group-flush text-center">
+                  <li class="list-group-item"><i class="icon-ok text-danger"></i> Usage personnel</li>
+                  <li class="list-group-item"><i class="icon-ok text-danger"></i> Usage illimité</li>
+                  <li class="list-group-item"><i class="icon-ok text-danger"></i> Support 24/7</li>
+                </ul>
+                <div class="panel-footer text-center">
+                <form id="convertir'.$ref[$i].'" class="form-horizontal" action="conversion.php" method="post">
+                  <input class="btn btn-lg btn- block btn-'.$color_b[$i].'" name="convertBtn'.$ref[$i].'" type="submit" value="CONVERTIR" />
+                  <input name="item_to_adjust" type="hidden" value="'.$ref[$i].'" />
+                </form>
+                </div>
+                <div class="panel-info text-center">
+                  <span class="badge" href="#">'.$qte[$i].' Restants</span>
+                </div>
+              </div>
+              <!-- /PRICE ITEM -->
+
+
+        </div>';
+      }
   }
 }
 
-    $dbh = null;
-} catch (PDOException $e) {
-    print "Erreur !: " . $e->getMessage() . "<br/>";
-    die();
-}
-?>
 
+?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -106,86 +114,8 @@ if (!$orders) {
 
 <div class="container">
   <div class="row">
-          <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
 
-          <!-- PRICE ITEM -->
-          <div class="panel price panel-red">
-            <div class="panel-heading  text-center">
-            <h3>FORFAIT 1 MOIS</h3>
-            </div>
-            <div class="panel-body text-center">
-              <p class="lead" style="font-size:40px"><strong>€50 / Mois</strong></p>
-            </div>
-            <ul class="list-group list-group-flush text-center">
-              <li class="list-group-item"><i class="icon-ok text-danger"></i> Usage personnel</li>
-              <li class="list-group-item"><i class="icon-ok text-danger"></i> Usage illimité</li>
-              <li class="list-group-item"><i class="icon-ok text-danger"></i> Support 24/7</li>
-            </ul>
-            <div class="panel-footer">
-              <a class="btn btn-lg btn-block btn-danger" href="#">CONVERTIR</a>
-            </div>
-            <div class="panel-info text-center">
-              <span class="badge" href="#">2 Restants</span>
-            </div>
-          </div>
-          <!-- /PRICE ITEM -->
-
-
-        </div>
-
-        <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-
-          <!-- PRICE ITEM -->
-          <div class="panel price panel-blue">
-            <div class="panel-heading arrow_box text-center">
-            <h3>FORFAIT 2 MOIS</h3>
-            </div>
-            <div class="panel-body text-center">
-              <p class="lead" style="font-size:40px"><strong>€50 / mois</strong></p>
-            </div>
-            <ul class="list-group list-group-flush text-center">
-              <li class="list-group-item"><i class="icon-ok text-info"></i> Usage personnel</li>
-              <li class="list-group-item"><i class="icon-ok text-info"></i> Usage illimité</li>
-              <li class="list-group-item"><i class="icon-ok text-info"></i> Support 24/7</li>
-            </ul>
-            <div class="panel-footer">
-              <a class="btn btn-lg btn-block btn-info" href="#">CONVERTIR</a>
-            </div>
-            <div class="panel-info text-center">
-              <span class="badge" href="#">2 Restants</span>
-            </div>
-          </div>
-          <!-- /PRICE ITEM -->
-
-
-        </div>
-
-        <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-
-          <!-- PRICE ITEM -->
-          <div class="panel price panel-green">
-            <div class="panel-heading arrow_box text-center">
-            <h3>FORFAIT 3 MOIS</h3>
-            </div>
-            <div class="panel-body text-center">
-              <p class="lead" style="font-size:40px"><strong>€50 / mois</strong></p>
-            </div>
-            <ul class="list-group list-group-flush text-center">
-              <li class="list-group-item"><i class="icon-ok text-success"></i> Usage personnel</li>
-              <li class="list-group-item"><i class="icon-ok text-success"></i> Usage illimité</li>
-              <li class="list-group-item"><i class="icon-ok text-success"></i> Support 24/7</li>
-            </ul>
-            <div class="panel-footer">
-              <a class="btn btn-lg btn-block btn-success" href="#">CONVERTIR</a>
-            </div>
-            <div class="panel-info text-center">
-              <span class="badge" href="#">2 Restants</span>
-            </div>
-          </div>
-          <!-- /PRICE ITEM -->
-
-
-        </div>
+  <?php echo $output_str;?>
 
 </div> <!-- /row-->
 </div> <!-- /container-->
