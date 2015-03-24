@@ -46,7 +46,7 @@ if (!$orders) {
 } else {
   foreach($orders as $ach){
         $orders_str .='<tr>';
-        $orders_str .='<td>' . $ach['ref'] . '</td>
+        $orders_str .='<td>' . substr( $ach['ref'] , 0 , 5 ) . '... ' . '</td>
                           <td>'. date("Y-m-d H:i:s", $ach['payment_date']) .'</td>
                           <td>'.$ach['mc_gross'].'</td>
                           <td><span class="label label-success"><a target="_blank" style="target-new: tab;" href="generate_pdf.php?ref='.$ach['ref'].'">OUVRIR</a></span>
