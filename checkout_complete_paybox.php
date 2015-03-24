@@ -20,14 +20,17 @@ $connection->connectToDatabase();
 $connection->selectDatabase();
 
 try {
+    //Creation handler d'autorisation
     $arp = new AuthorizeResponsePaybox($_SERVER['QUERY_STRING']);
+    //Si on a pu mettre en BD la trnasac
     if ($arp->storeTransac()){
+        //On renseigne les BD Orders et Quantités
         $storeOrders = new StoreOrders($arp->getUsername(), $arp->getRef());
         $storeOrders->storeInBase();
         $storeQte = new StoreQte($arp->getUsername(), $arp->getList());
         $storeQte->storeInBase();
 
-        $var = $storeQte->getQte413();
+        //Verification a enlever
         if ($somme = $arp->computeChecks()){
             $valid =  "Tout est Cohérent !";
         }else {
@@ -84,7 +87,7 @@ try {
                             <span class="glyphicon glyphicon-ok" style="font-size:120px;text-align: center "></span>
 
                             <h1>Paiement Validé</VAR></h1>
-                            <h1>Paiment Valide (code erreur + signature)<!-- *<?php echo $var; ?>* --></VAR></h1>
+                            <h1>Paiment Valide (code erreur + signature)</VAR></h1>
                             <p>Cliquez sur ce bouton pour revenir à l'accueil</p>
                             <a class="btn btn-lg btn-success" href="/convertItems.php" role="button">Convertir l'achat</a>
                             <a class="btn btn-lg btn-success" href="/" role="button">Retour Accueil</a>

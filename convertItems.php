@@ -20,14 +20,13 @@ $connection->selectDatabase();
 
 $username = $info['username'];
 
+//Recupere les qtes d'achats de user
 $sql = mysql_query("SELECT qte_413, qte_414, qte_415 FROM users WHERE username='$username' LIMIT 1");
 $qte = array();
 while ($row = mysql_fetch_array($sql)) {
   array_push($qte,$row["qte_413"]);
   array_push($qte,$row["qte_414"]);
   array_push($qte,$row["qte_415"]);
-  //$q414 = $row["qte_414"];
-  //$q415 = $row["qte_415"];
 }
 
 $ref = array("413", "414", "415");
@@ -35,9 +34,11 @@ $color = array("red", "blue", "green");
 $color_b = array("danger", "primary", "success");
 $i = 0;
 $output_str = "";
+//Si il n'a rien en stock
 if (!$qte[0] && !$qte[1] && !$qte[2]){
   $output_str .= "AUCUN JETON DISPONIBLE...";
 } else {
+  //Sinon creation des templates avec bouton convertir
   for($i = 0; $i <= 2; $i++){
     if ($qte[$i]){
       $output_str .= '<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">

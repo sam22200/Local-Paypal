@@ -98,24 +98,26 @@ $captcha = new Captcha($sitekey, $secret);
   <div class="jumbotron">
     <div class="container">
         <div class="row">
-            <div class="col-md-4 text-center col-md-offset-4">
-                <h3> Pour obtenir votre clé d'activation cliquez sur 'Je ne suis pas un robot' et cliquez ensuite sur le bouton 'Obtenir le code' </h3>
-                <h3> Vous désirez convertir ce produit </h3>
-                <h3> <?php echo $prodName; ?></h3>
-                <h3> <?php echo $prodDetails; ?> </h3>
-                <h3> <?php echo $prodCategory; ?> </h3>
-                <h3> <?php echo $prodSubCategory; ?> </h3>
+            <div class="col-lg-5 col-md-5 col-sm-6 col-xs-10 col-lg-offset-4 col-md-offset-4 col-sm-offset-3 col-xs-offset-1 text-center">
+                <p> <?php echo $prodName; ?></p>
+                <p> <?php echo $prodDetails; ?> </p>
+                <p> Pour obtenir le code </p>
+                <p> 1. Cliquez sur 'Je ne suis pas un robot' </p>
+                <p> 2. Cliquez ensuite sur le bouton 'Obtenir le code' </p>
 
             </div>
         </div> <!-- row -->
 
         <div class="row">
-          <div class="col-md-6 col-md-offset-3 text-center">
+          <div class="col-lg-5 col-md-5 col-sm-6 col-xs-10 col-lg-offset-4 col-md-offset-4 col-sm-offset-3 col-xs-offset-1 text-center">
             <p> </p>
             <form method="post" action="valid_captcha.php">
-              <?php echo $captcha->getHTML() . PHP_EOL ?>
+              <div class="captcha-wrapper" style="border-style: solid;  background-color: white;  border-color: #FF6666;">
+                <?php echo $captcha->getHTML() . PHP_EOL ?>
+              </div>
               <input name="item_to_adjust" type="hidden" value=<?php echo $_POST['item_to_adjust'] ?>  />
-              <input type="submit" value="Obtenir le code" />
+              </br>
+              <input class="btn btn-primary" type="submit" value="Obtenir le code" />
             </form>
 
           </div>

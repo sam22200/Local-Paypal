@@ -6,23 +6,23 @@ class User {
   function __construct(){}
 
   function randomString( $len=32 ){
-    // Initialise a string
+    // Initialise string
     $s = '';
-    // Possible characters
+    // Possibles carac
     $letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
     for( $i=0 ; $i<$len ; $i++ ){
-      // Grab a random letter for $letters
+      // Choisi une lettre au hasard dans $letters
       $char = $letters[mt_rand( 0 , strlen( $letters )-1 )];
-      $s .= $char; //Add it to the string
+      $s .= $char; //Ajoute a la string
     }
     return $s;
   }
 
   function hash( $password , $salt , $created_at ){
-    // Reverses the date and removes the dashes
+    // renverse la date et enleve les /
     $date = sha1( strrev( (string) $created_at ) );
-    // Yay! Bcrypt
+    // Bcrypt
     return crypt($salt . $password . $date . $salt , '$2a$12$' . $salt);
   }
 
@@ -41,10 +41,10 @@ class User {
     if( $this->exists( $userName ) )
       return false;
 
-    $salt = $this->salt(); //Generate a salt using the username provided
+    $salt = $this->salt(); //Génère un grain avec l'username
     $date = time();
-    $password = $this->hash( $userPassword , $salt , $date ); //Hash the password with the new salt
-    //The query for inserting our new user into the DB
+    $password = $this->hash( $userPassword , $salt , $date ); //Hash le mdp avec le grain
+    //Insere un user en BD
     $q1 = sprintf( "INSERT INTO users (username, password, rand, created_at, mail) VALUES ('%s', '%s', '%s', '%s', '%s')" ,
             mysql_real_escape_string( $userName ) ,
             mysql_real_escape_string( $password ) ,
@@ -55,7 +55,7 @@ class User {
     if( mysql_query( $q1 ) ){
       return mysql_insert_id();
     } else {
-    die( mysql_error() ); // Run it. If it doesn't go through stop the script and display the error.
+    die( mysql_error() ); // ERREUR
     return false;
     }
   }
@@ -97,30 +97,32 @@ class User {
     $connection->connectToDatabase();
     $connection->selectDatabase();
 
-    // Grabbing all the user details with this query
+    // Prend certaines infos de l'user
     $q1 = sprintf( "SELECT password, rand, created_at FROM users WHERE username='%s'" ,
             mysql_real_escape_string( $userName )
           );
     $r1 = mysql_fetch_array( mysql_query( $q1 ) );
     $ph = $this->hash( $userPassword , $r1['rand'] , $r1['created_at'] );
-    // Return whether it is true or false
+    // Retourne si oui ou non ça match
     return ( $r1['password'] == $this->hash( $userPassword , $r1['rand'] , $r1['created_at'] ) );
   }
 
   function setLoggedIn($userName, $email, $userPassword) {
-    //This function is self explanitory :)
+    // UPDATE la session
     $_SESSION['loggedIn'] = true;
     $_SESSION['userName'] = $userName;
     $_SESSION['email'] = $email;
     $_SESSION['userPassword'] = $userPassword;
   }
 
+  //Verifie si on est loggé
   function isLoggedIn() {
     return ( isset( $_SESSION['loggedIn'] )
              && $_SESSION['loggedIn']
              && $this->verify( $_SESSION['userName'], $_SESSION['userPassword'] ) );
   }
 
+  //Redirige sur une page
   function redirectTo($page) {
     if( !headers_sent() ){
       header( 'Location: ' . $page . '.php' );
@@ -128,6 +130,7 @@ class User {
     die( '<a href="'.$page.'.php">Go to '.$page.'.php</a>' );
   }
 
+  //Retourne les infos d'un user
   function userInfo( $userName ){
     // Connect to the MySQL database
     require_once "class_connexion.php";
@@ -135,11 +138,11 @@ class User {
     $connection->connectToDatabase();
     $connection->selectDatabase();
 
-    // This function returns all user details to the front end. This is to save storing it all in sessions
+    // Retourne toutes les infos pour pas le faire en session
     $q1 = sprintf( "SELECT * FROM users WHERE username='%s'" ,
             mysql_real_escape_string( $userName )
           );
-    // Fetch and Return the array
+
     return mysql_fetch_array( mysql_query( $q1 ) );
   }
 
@@ -150,20 +153,20 @@ class User {
     $connection->connectToDatabase();
     $connection->selectDatabase();
 
-    // This function returns all user details to the front end. This is to save storing it all in sessions
     $q1 = sprintf( "SELECT * FROM users WHERE id=%s" ,
             (int) $UID
           );
-    // Fetch and Return the array
+
     return mysql_fetch_array( mysql_query( $q1 ) );
   }
 
+  //Deconnection
   function logOut(){
-    // If they are logged in
+    // Si l'user est connecté
     if( isset( $_SESSION['loggedIn'] ) ){
-      // Unset the session variables
+      // Unset les variables de session
       unset( $_SESSION['loggedIn'] , $_SESSION['userName'] , $_SESSION['email'], $_SESSION['userPassword'] );
-      // Redirect to the login page
+      // Redirection
       $this->redirectTo( '../cart' );
     }
   }
@@ -175,7 +178,7 @@ class User {
     $connection->connectToDatabase();
     $connection->selectDatabase();
 
-    // Checks a user exists (for the register page)
+    // Verifie si l'user existe en BD
     $q1 = sprintf( "SELECT username FROM users WHERE username = '%s'" ,
             mysql_real_escape_string( $userName )
           );

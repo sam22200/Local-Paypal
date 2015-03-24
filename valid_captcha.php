@@ -5,30 +5,36 @@ date_default_timezone_set('Europe/Paris');
 include( 'Captcha.php' );
 //User class
 include( 'storescripts/class_user.php' );
-//User class
+//Generateur de code d'activation
 include( 'storescripts/class_invoiceNumberPaypal.php' );
 
+//Si user pas loggé, redirection
 $user = new User();
 
 if( !$user->isLoggedIn() ){
   $user->redirectTo( 'login' );
 } else {
+    //Sinon on récupère ses infos
     $info = $user->userInfo($_SESSION['userName']);
     $userMail = $info['mail'];
 }
 
+//Creation de l'objet Captcha
 use Oz\Recaptcha\Captcha;
 $sitekey = '6Lf46wMTAAAAAGhYQUrmy5_u6qJ1cmh8-gxkIAni';
 $secret = '6Lf46wMTAAAAAOqcnKyA9_OTWB5SIjNGZN-E5Rz2';
 
 $captcha = new Captcha($sitekey, $secret);
 $is_verified = false;
+//Verification
 if ( isset($_POST[Captcha::RESPONSE_FIELD_KEY]) )
 {
     $is_verified = $captcha->verify($_POST[Captcha::RESPONSE_FIELD_KEY]);
 }
 
+
 $itemToSet;
+//Si captcha ok && item est séléctionné -> ote l'élément en BD, génére code et mail
 if ( $is_verified && (isset($_POST['item_to_adjust']) && $_POST['item_to_adjust'] != "" ))
 {
     // Connect to the MySQL database
@@ -49,6 +55,7 @@ if ( $is_verified && (isset($_POST['item_to_adjust']) && $_POST['item_to_adjust'
 
     //Si la qte est > 0
     if($qte[0] > 0){
+        //UPDTAE a qte -1
         $q1 = sprintf( "UPDATE users SET %s='%s' WHERE username='%s'" ,
             mysql_real_escape_string( $field ),
             mysql_real_escape_string( $qte[0]-1 ),
@@ -61,7 +68,16 @@ if ( $is_verified && (isset($_POST['item_to_adjust']) && $_POST['item_to_adjust'
         //Creer un code d'activation
         $invoice = new invoiceNumberPaypal();
         $inv = $invoice->getInvoiceNumber();
-        //Envoi par mail
+
+/*        $q2 = sprintf( "UPDATE users SET %s='%s' WHERE username='%s'" ,
+            mysql_real_escape_string( $field ),
+            mysql_real_escape_string( $qte[0]-1 ),
+            mysql_real_escape_string( $username )
+        );
+
+        if ( mysql_query( $q1 ) );
+*/
+        //Envoi par mail du code
         require '/PHPMailer-master/PHPMailerAutoload.php'; //or select the proper destination for this file if your page is in some   //other folder
 
         ini_set("SMTP","ssl://smtp.gmail.com");

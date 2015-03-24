@@ -12,21 +12,24 @@ class StoreQte {
         $this->qte413 = 0;
         $this->qte414 = 0;
         $this->qte415 = 0;
-
+        //Update les attributs qte avec ceux en BD
         $this->storeQte($qteStr);
     }
 
     protected function storeQte($array){
       //Scinde la string des produits en Code et Qte
+      //Scinde le carac ',' pour chaque produit
       $str = $array;
       $arrP = explode(',',$str);
       $i = 0;
+      //Pour chaque Str, scinde en deux avec le '-' pour id et qte
       foreach($arrP as $p){
         $arr_tmp = explode('-',$p);
         $arr2[$i] = $arr_tmp;
         $i = $i+1;
       }
 
+      //Itere sur les produits
       foreach($arr2 as $pr){
         switch ($pr[0]) {
             case "413":
@@ -51,6 +54,7 @@ class StoreQte {
         $connection->connectToDatabase();
         $connection->selectDatabase();
 
+        //UPDATE des attibuts avec ceux de la BD
         $sql = mysql_query("SELECT * FROM users WHERE id='$this->username' LIMIT 1");
         while($row = mysql_fetch_array($sql)){
           $this->qte413 += $row["qte_413"];
@@ -58,7 +62,7 @@ class StoreQte {
           $this->qte415 += $row["qte_415"];
         }
 
-        //The query for inserting our new user into the DB
+        //UPDATE des champs quantités de la BD
         $q1 = sprintf( "UPDATE users SET qte_413='%s', qte_414='%s', qte_415='%s' WHERE id='%s'" ,
                 mysql_real_escape_string( $this->qte413 ) ,
                 mysql_real_escape_string( $this->qte414 ) ,
