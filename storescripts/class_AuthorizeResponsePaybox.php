@@ -157,6 +157,18 @@ class AuthorizeResponsePaybox {
     return isset($this->list) ? $this->list : null;
   }
 
+  //Retourne la date de la transaction
+  public function getDate()
+  {
+    return isset($this->date) ? $this->date : null;
+  }
+
+  //Retourne la date de la transaction
+  public function getType()
+  {
+    return isset($this->type) ? $this->type : null;
+  }
+
   //Verifie la cohérence du montant en fonction de la liste de produit
   protected function checkAmount(){
       // Connect to the MySQL database

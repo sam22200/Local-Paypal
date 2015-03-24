@@ -4,43 +4,73 @@ session_start();
 unset($_SESSION["cart_array"]);
 
 
-if ($_SERVER['REQUEST_METHOD'] != "GET") die ("No Passed Variables");
+if ($_SERVER['QUERY_STRING'] != null) {
 
-//Verifier la reponse de paybox et faire les inscriptions en BD
-require_once 'storescripts/class_AuthorizeResponsePaybox.php';
-//Inscription dans quantites
-require_once "storescripts/class_StoreQte.php";
-//Inscription dans orders
-require_once "storescripts/class_StoreOrders.php";
+    //Verifier la reponse de paybox et faire les inscriptions en BD
+    require_once 'storescripts/class_AuthorizeResponsePaybox.php';
+    //Inscription dans quantites
+    require_once "storescripts/class_StoreQte.php";
+    //Inscription dans orders
+    require_once "storescripts/class_StoreOrders.php";
+    //Template du mail
+    require_once "storescripts/class_email_text.php";
+    //Template du mail
+    require_once "storescripts/class_user.php";
 
-// Connect to the MySQL database
-require_once "storescripts/class_connexion.php";
-$connection = new createConnection();
-$connection->connectToDatabase();
-$connection->selectDatabase();
+    // Connect to the MySQL database
+    require_once "storescripts/class_connexion.php";
+    $connection = new createConnection();
+    $connection->connectToDatabase();
+    $connection->selectDatabase();
 
-try {
-    //Creation handler d'autorisation
-    $arp = new AuthorizeResponsePaybox($_SERVER['QUERY_STRING']);
-    //Si on a pu mettre en BD la trnasac
-    if ($arp->storeTransac()){
-        //On renseigne les BD Orders et Quantités
-        $storeOrders = new StoreOrders($arp->getUsername(), $arp->getRef());
-        $storeOrders->storeInBase();
-        $storeQte = new StoreQte($arp->getUsername(), $arp->getList());
-        $storeQte->storeInBase();
+    try {
+        //Creation handler d'autorisation
+        $arp = new AuthorizeResponsePaybox($_SERVER['QUERY_STRING']);
+        //Si on a pu mettre en BD la trnasac
+        if ($arp->storeTransac()){
+            //On renseigne les BD Orders et Quantités
+            $storeOrders = new StoreOrders($arp->getUsername(), $arp->getRef());
+            $storeOrders->storeInBase();
+            $storeQte = new StoreQte($arp->getUsername(), $arp->getList());
+            $storeQte->storeInBase();
 
-        //Verification a enlever
-        if ($somme = $arp->computeChecks()){
-            $valid =  "Tout est Cohérent !";
-        }else {
-            $valid =  "NON Cohérent !";
+            //Envoi le mail
+            $q1 = sprintf( "SELECT mail FROM users WHERE id=%s" ,
+                (int) $arp->getUsername()
+            );
+
+            $row = mysql_fetch_array( mysql_query( $q1 ) );
+            $email = $row['mail'];
+            $template = new EmailText($arp->getRef(), $arp->getDate(), $arp->getUsername(), $arp->getAmount()/100, "CARTE", $arp->getType(), $arp->getList() , "EUR");
+            $template->computeSubject();
+            $template->computeBody();
+
+            //Envoi par mail du code
+            require_once '/PHPMailer-master/PHPMailerAutoload.php'; //or select the proper destination for this file if your page is in some   //other folder
+            $mail = new PHPMailer();
+            $mail->SMTPAuth = true;
+            $mail->Host = "smtp.gmail.com";
+            $mail->SMTPSecure = "ssl";
+            $mail->Username = "coz.samuel@gmail.com";
+            $mail->Password = "samu1992";
+            $mail->Port = "465";
+            $mail->IsSMTP();
+            $mail->AddAddress($email);
+            $mail->Subject  = $template->getSubject();
+            $mail->Body = $template->getBody();
+            $mail->WordWrap = 200;
+            $mail->Send();
+
+            header('Location: checkout_complete_paybox.php');
+        } else {
+            unset($_SESSION);
+            header('Location: index.php');
         }
+    } catch (Exception $e) {
+        echo 'Exception reçue : ',  $e->getMessage(), "\n";
     }
-} catch (Exception $e) {
-    echo 'Exception reçue : ',  $e->getMessage(), "\n";
-}
 
+}
 ?>
 
 <!DOCTYPE html>
@@ -88,7 +118,9 @@ try {
 
                             <h1>Paiement Validé</VAR></h1>
                             <h1>Paiment Valide (code erreur + signature)</VAR></h1>
+                            <p>
                             <p>Cliquez sur ce bouton pour revenir à l'accueil</p>
+                            <p>Votre confirmation d'achat vous a été envoyée par mail</p>
                             <a class="btn btn-lg btn-success" href="/convertItems.php" role="button">Convertir l'achat</a>
                             <a class="btn btn-lg btn-success" href="/" role="button">Retour Accueil</a>
                         </div>

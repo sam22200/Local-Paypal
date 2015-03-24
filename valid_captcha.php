@@ -69,37 +69,22 @@ if ( $is_verified && (isset($_POST['item_to_adjust']) && $_POST['item_to_adjust'
         $invoice = new invoiceNumberPaypal();
         $inv = $invoice->getInvoiceNumber();
 
-/*        $q2 = sprintf( "UPDATE users SET %s='%s' WHERE username='%s'" ,
-            mysql_real_escape_string( $field ),
-            mysql_real_escape_string( $qte[0]-1 ),
-            mysql_real_escape_string( $username )
-        );
-
-        if ( mysql_query( $q1 ) );
-*/
         //Envoi par mail du code
-        require '/PHPMailer-master/PHPMailerAutoload.php'; //or select the proper destination for this file if your page is in some   //other folder
-
-        ini_set("SMTP","ssl://smtp.gmail.com");
-        ini_set("smtp_port","465"); //No further need to edit your configuration files.
+        require_once '/PHPMailer-master/PHPMailerAutoload.php'; //or select the proper destination for this file if your page is in some   //other folder
         $mail = new PHPMailer();
-        $mail->SMTPDebug = 0;
         $mail->SMTPAuth = true;
-        $mail->Host = "smtp.gmail.com"; // SMTP server
+        $mail->Host = "smtp.gmail.com";
         $mail->SMTPSecure = "ssl";
-        $mail->Username = "coz.samuel@gmail.com"; //account with which you want to send mail. Or use this account. i dont care :-P
-        $mail->Password = "samu1992"; //this account's password.
+        $mail->Username = "coz.samuel@gmail.com";
+        $mail->Password = "samu1992";
         $mail->Port = "465";
-        $mail->IsSMTP();  // telling the class to use SMTP
-        $rec1=$userMail; //receiver. email addresses to which u want to send the mail.
-        $mail->AddAddress($rec1);
-
-        // Mail yourself the details
-        //mail("samuel.coz@praxedo.com", "NORMAL IPN RESULT YAY MONEY!", $req, "From: PXO_SELL_1@seller.fr");
+        $mail->IsSMTP();
+        $mail->AddAddress($userMail);
         $mail->Subject  = "CODE ACTIVATION PRAXEDO";
-        $mail->Body     = "Voici votre code d'activation : ".$inv;
+        $mail->Body = "Voici votre code d'activation : ".$inv;
         $mail->WordWrap = 200;
         $mail->Send();
+
     } else {
         $user->redirectTo( 'index' );
     }

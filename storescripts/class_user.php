@@ -146,7 +146,7 @@ class User {
     return mysql_fetch_array( mysql_query( $q1 ) );
   }
 
-  function userInfoId( $UID ){
+  static function userInfoId( $UID ){
     // Connect to the MySQL database
     require_once "class_connexion.php";
     $connection = new createConnection();

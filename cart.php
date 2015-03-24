@@ -227,7 +227,7 @@ if( $user->isLoggedIn() && !$isEmpty){
       $PBX_RANG = "32";
       $PBX_IDENTIFIANT = "1686319";
       $PBX_EFFECTUE = "http://pxo.t.proxylocal.com/checkout_complete_paybox.php";
-      $PBX_REPONDRE_A = "pxo.t.proxylocal.com%2Fstorescripts%2Fipn_paybox.php";
+      $PBX_REPONDRE_A = "pxo.t.proxylocal.com/storescripts/ipn_paybox.php";
       $PBX_ANNULE = "http://pxo.t.proxylocal.com/paypal_cancel.html";
       $PBX_TYPEPAIEMENT = "CARTE";
       $PBX_TYPECARTE = "VISA";

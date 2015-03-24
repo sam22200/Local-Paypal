@@ -3,12 +3,7 @@
 session_start();
 date_default_timezone_set('Europe/Paris');
 require_once( 'storescripts/class_user.php' );
-/*
-// Connect to the MySQL database
-require_once "storescripts/class_connexion.php";
-$connection = new createConnection();
-$connection->connectToDatabase();
-$connection->selectDatabase();*/
+
 
 $user = new User();
 
@@ -54,7 +49,7 @@ if (!$orders) {
         $orders_str .='<td>' . $ach['ref'] . '</td>
                           <td>'. date("Y-m-d H:i:s", $ach['payment_date']) .'</td>
                           <td>'.$ach['mc_gross'].'</td>
-                          <td><span class="label label-success"><a href="#">OUVRIR</a></span>
+                          <td><span class="label label-success"><a target="_blank" style="target-new: tab;" href="generate_pdf.php?ref='.$ach['ref'].'">OUVRIR</a></span>
                           </td>';
         $orders_str .='</tr>';
   }
