@@ -37,7 +37,7 @@ try {
 
 
 $str = "";
-$str .= 'SELECT ref, payment_date, mc_gross from orders, transactions WHERE transactions.txn_id=orders.ref AND orders.username="'.$info['id'].' "LIMIT 10';
+$str .= 'SELECT ref, payment_date, day, mc_gross from orders, transactions WHERE transactions.txn_id=orders.ref AND orders.username="'.$info['id'].' "ORDER BY transactions.id DESC LIMIT 0, 10';
 
 
 $orders = array();
@@ -52,9 +52,10 @@ if (!$orders) {
   $orders_str ='<tr><td>Aucun Achat ...</td></tr>';
 } else {
   foreach($orders as $ach){
+      $day = substr($ach['day'],0,2)."/".substr($ach['day'],2,2)."/".substr($ach['day'],4,4);
         $orders_str .='<tr>';
         $orders_str .='<td>' . substr( $ach['ref'] , 0 , 5 ) . '... ' . '</td>
-                          <td>'. date("Y-m-d H:i:s", $ach['payment_date']) .'</td>
+                          <td>'. $day .'</td>
                           <td>'.$ach['mc_gross'].'</td>
                           <td><span class="label label-success"><a target="_blank" style="target-new: tab;" href="generate_pdf.php?ref='.$ach['ref'].'">OUVRIR</a></span>
                           </td>';

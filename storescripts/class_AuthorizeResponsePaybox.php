@@ -6,6 +6,7 @@ class AuthorizeResponsePaybox {
   private $montant;
   private $type;
   private $date;
+  private $day;
   private $ref;
   private $id;
   private $erreur;
@@ -54,6 +55,11 @@ class AuthorizeResponsePaybox {
         throw new Exception("Code date non transmis.");
       }
       $this->date = $output['date'];
+
+      if (empty($output['day'])){
+        throw new Exception("Code date non transmis.");
+      }
+      $this->day = $output['day'];
 
       if (empty($output['ref'])){
         throw new Exception("Code ref non transmis.");
@@ -178,6 +184,19 @@ class AuthorizeResponsePaybox {
     return isset($this->type) ? $this->type : null;
   }
 
+  //Retourne la date de la transaction
+  public function getDay()
+  {
+    return isset($this->day) ? $this->day : null;
+  }
+
+  //Retourne la date de la transaction
+  public function getBin6()
+  {
+    return isset($this->bin6) ? $this->bin6 : null;
+  }
+
+
   //Verifie la cohérence du montant en fonction de la liste de produit
   protected function checkAmount(){
       // Connect to the MySQL database
@@ -255,7 +274,7 @@ class AuthorizeResponsePaybox {
 
     //Insert les valeurs en BASE
     $price = $this->montant/100;
-    $query="INSERT INTO transactions (product_id_array, mc_gross, txn_id, payment_date, payment_type, payment_status, invoiceNumber, address_zip) values('$this->list', '$price', '$this->order', '$this->date', '$this->type', 'OK', '$this->ref', '$this->bin6')";
+    $query="INSERT INTO transactions (product_id_array, mc_gross, txn_id, payment_date, day, payment_type, payment_status, invoiceNumber, address_zip) values('$this->list', '$price', '$this->order', '$this->date','$this->day', '$this->type', 'OK', '$this->ref', '$this->bin6')";
     mysql_query($query)  or die(mysql_error());
 
     return true;

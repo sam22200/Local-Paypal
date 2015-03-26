@@ -53,7 +53,7 @@ if ($_SERVER['QUERY_STRING'] != null) {
             $email = $row['mail'];
             //Template du mail
             require_once "class_email_text.php";
-            $template = new EmailText($arp->getRef(), $arp->getOrder(), $arp->getDate(), $arp->getUsername(), $arp->getAmount()/100, "CARTE", $arp->getType(), $arp->getList() , "EUR");
+            $template = new EmailText($arp->getRef(), $arp->getOrder(), $arp->getDate(), $arp->getDay(), $arp->getUsername(), $arp->getAmount()/100, "CARTE", $arp->getType(), $arp->getList() , "EUR", $arp->getBin6());
             $template->computeSubject();
             $template->computeBody();
 

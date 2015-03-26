@@ -23,25 +23,30 @@ date_default_timezone_set('Europe/Paris');
     private $subject;
     private $invoice; //"ADAZDAAC4648D6"
     private $order; // "PXO619668"
-    private $dateOrder; //"24/03/2015"
+    private $date; //"24/03/2015"
+    private $day;
     private $username;  //"sam22200"
     private $total;  //"300"
     private $paymentMethod; //"VISA"
     private $typePayment; //"CARTE"
     private $products_ordered; //"413"=>"3","414"=>"1"
     private $devise; //"EUR"
+    private $bin6; //"418678"
 
-    function __construct($inv, $order, $date, $username, $total, $paymentMethod, $typePayment, $products_ordered, $devise)
+    function __construct($inv, $order, $date, $day, $username, $total, $paymentMethod, $typePayment, $products_ordered, $devise, $bin6)
     {
       $this->invoice = $inv;
       $this->order = $order;
       $this->date = $date;
+      $this->day = substr($day,0,2)."/".substr($day,2,2)."/".substr($day,4,4);
       $this->username = $username;
       $this->total = $total;
       $this->paymentMethod = $paymentMethod;
       $this->typePayment = $typePayment;
       $this->products_ordered = $this->computeArrayProducts($products_ordered);
       $this->devise = $devise;
+      $bin6 .= "**********";
+      $this->bin6 = $bin6;
 
     }
 
@@ -58,14 +63,14 @@ date_default_timezone_set('Europe/Paris');
     }
 
     public function computeBody(){
-      setlocale(LC_TIME, "fr_FR");
+      //setlocale(LC_TIME, "fr_FR");
       $body = "";
       $body = "";
       $body .= EmailText::STORE_NAME . "\n" .
       EmailText::EMAIL_SEPARATOR . "\n\n" .
       EmailText::EMAIL_TEXT_ORDER_NUMBER . ' ' . "\n" . '' . $this->order . "\n\n" .
       EmailText::EMAIL_TEXT_INVOICE_URL . ' ' . "\n" . '' . $this->invoice . "\n\n" .
-      EmailText::EMAIL_TEXT_DATE_ORDERED . ' ' . "\n" . '' . strftime("%A") . "\n\n\n";
+      EmailText::EMAIL_TEXT_DATE_ORDERED . ' ' . "\n" . $this->day . ' à ' . $this->date . "\n\n\n";
       $body .= EmailText::EMAIL_TEXT_PRODUCTS . "\n" .
       EmailText::EMAIL_SEPARATOR . "\n\n";
 
@@ -80,7 +85,8 @@ date_default_timezone_set('Europe/Paris');
       $body .= EmailText::EMAIL_TEXT_PAYMENT_METHOD . "\n" .
       EmailText::EMAIL_SEPARATOR . "\n\n";
       $body .= EmailText::EMAIL_TEXT_METHOD_PAYMENT . ' ' . $this->paymentMethod . "\n" .
-      EmailText::EMAIL_TEXT_CARD_TYPE . ' ' . $this->typePayment . "\n\n";
+      EmailText::EMAIL_TEXT_CARD_TYPE . ' ' . $this->typePayment . "\n";
+      $body .= "Carte utilisee : " . ' ' . $this->bin6 . "\n\n";
 
 /*      if ($payment_class->email_footer) {
       $this->body .= $payment_class->email_footer . "\n\n";

@@ -30,12 +30,12 @@ if (isset($_GET['ref']) AND $_GET['ref'] != "")
     }
 
     //Envoi le mail
-    $q1 = sprintf( "SELECT * FROM transactions WHERE InvoiceNumber='%s'" ,
+    $q1 = sprintf( "SELECT * FROM transactions WHERE txn_id='%s'" ,
        mysql_real_escape_string( $_GET['ref'] )
     );
     $row = mysql_fetch_array( mysql_query( $q1 ) );
 
-    $template = new EmailText($row['InvoiceNumber'], $row['txn_id'], $row['payment_date'], $info['id'], $row['mc_gross'], "CARTE", $row['payment_type'], "413-1,414-2" , "EUR");
+    $template = new EmailText($row['InvoiceNumber'], $row['txn_id'], $row['payment_date'], $row['day'], $info['id'], $row['mc_gross'], "CARTE", $row['payment_type'], $row['product_id_array'] , "EUR", $row['address_zip']);
     $template->computeSubject();
     $template->computeBody();
 

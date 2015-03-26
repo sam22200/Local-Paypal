@@ -242,7 +242,7 @@ if( $user->isLoggedIn() && !$isEmpty){
       $PBX_DEVISE = 978;
       $PBX_CMD = $inv2;
       $PBX_PORTEUR = "test@paybox.com";
-      $PBX_RETOUR = "auto:A;montant:M;type:C;date:W;ref:R;id:S;erreur:E;bin6:N;signature:K";
+      $PBX_RETOUR = "auto:A;montant:M;type:C;date:Q;day:W;ref:R;id:S;erreur:E;bin6:N;signature:K";
       $PBX_HASH ="SHA512";
       $PBX_TIME = date("c");
       $PBX_IMG = "inventory_images/visa_64.png";
