@@ -1,10 +1,11 @@
 <?php
-
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 session_start();
 unset($_SESSION["cart_array"]);
 
 
-if ($_SERVER['QUERY_STRING'] != null) {
+/*if ($_SERVER['QUERY_STRING'] != null) {
 
     //Verifier la reponse de paybox et faire les inscriptions en BD
     require_once 'storescripts/class_AuthorizeResponsePaybox.php';
@@ -70,7 +71,7 @@ if ($_SERVER['QUERY_STRING'] != null) {
         echo 'Exception reçue : ',  $e->getMessage(), "\n";
     }
 
-}
+}*/
 ?>
 
 <!DOCTYPE html>

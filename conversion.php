@@ -54,7 +54,9 @@ if (isset($_POST['item_to_adjust']) && $_POST['item_to_adjust'] != "") {
 
 <?php
 //Création du Captcha
+//use Oz\Recaptcha\Captcha;
 use Oz\Recaptcha\Captcha;
+
 $sitekey = '6Lf46wMTAAAAAGhYQUrmy5_u6qJ1cmh8-gxkIAni';
 $secret = '6Lf46wMTAAAAAOqcnKyA9_OTWB5SIjNGZN-E5Rz2';
 

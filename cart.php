@@ -187,10 +187,12 @@ if ($isEmpty) {
 
 	setlocale(LC_ALL, "fr_FR");
   //$cartTotal = money_format("%10.2n", $cartTotal);
-  $cartTotalNumber = $cartTotal;
-	$cartTotal = "<div style='margin-top:12px;' align='right'>Total Panier : ".$cartTotal."</div>";
+
     $invoice = new invoiceNumberPaypal();
     $inv = $invoice->getInvoiceNumber();
+
+    $cartTotalNumber = $cartTotal;
+	  $cartTotal = "<div style='margin-top:12px;' align='right'>Total Panier : ".$cartTotal."</div>";
     // Finish the Paypal Checkout Btn
   	$pp_checkout_btn .= '<input type="hidden" name="custom" value="' . $product_id_array . '">
   	<input type="hidden" name="notify_url" value="http://pxo.t.proxylocal.com/storescripts/my_ipn.php">
@@ -216,6 +218,7 @@ if( $user->isLoggedIn() && !$isEmpty){
       $productsList .= ",$product_id-".$product_qte;
     }
     $productsList = ltrim($productsList,',');
+
     $invPbx = new invoiceNumberPaybox();
     $invPbx->setListProduct($productsList);
     $inv2 = $invPbx->getInvoiceNumber();
@@ -227,8 +230,11 @@ if( $user->isLoggedIn() && !$isEmpty){
       $PBX_RANG = "32";
       $PBX_IDENTIFIANT = "1686319";
       $PBX_EFFECTUE = "http://pxo.t.proxylocal.com/checkout_complete_paybox.php";
-      $PBX_REPONDRE_A = "pxo.t.proxylocal.com/storescripts/ipn_paybox.php";
+      $PBX_REPONDRE_A = "http://www.pxo.t.proxylocal.com/storescripts/ipn_paybox.php";
       $PBX_ANNULE = "http://pxo.t.proxylocal.com/paypal_cancel.html";
+/*      $PBX_EFFECTUE = "http://pxotestpaiement2.net16.net/checkout_complete_paybox.php";
+      $PBX_REPONDRE_A = "http://pxotestpaiement2.net16.net/storescripts/ipn_paybox.php";
+      $PBX_ANNULE = "http://pxotestpaiement2.net16.net/paypal_cancel.html";*/
       $PBX_TYPEPAIEMENT = "CARTE";
       $PBX_TYPECARTE = "VISA";
       $PBX_TOTAL = $cartTotalNumber*100;
@@ -242,12 +248,12 @@ if( $user->isLoggedIn() && !$isEmpty){
       $PBX_IMG = "inventory_images/visa_64.png";
 
       //HMAC DE TEST  0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF
-      $myPbxVisaBtn = new Paybox($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE , $PBX_TOTAL, $PBX_SOURCE, $PBX_DEVISE ,$PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH, $PBX_TIME, $PBX_IMG);
+      $myPbxVisaBtn = new Paybox($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_REPONDRE_A, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE , $PBX_TOTAL, $PBX_SOURCE, $PBX_DEVISE ,$PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH, $PBX_TIME, $PBX_IMG);
       $myPbxVisaStr = $myPbxVisaBtn->computePbxBtn();
       $PBX_TYPECARTE = "EUROCARD_MASTERCARD";
       $PBX_IMG = "inventory_images/master_64.png";
 
-      $myPbxMasterBtn = new Paybox($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE , $PBX_TOTAL, $PBX_SOURCE, $PBX_DEVISE ,$PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH, $PBX_TIME, $PBX_IMG);
+      $myPbxMasterBtn = new Paybox($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_REPONDRE_A, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE , $PBX_TOTAL, $PBX_SOURCE, $PBX_DEVISE ,$PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH, $PBX_TIME, $PBX_IMG);
       $myPbxMasterStr = $myPbxMasterBtn->computePbxBtn();
     }
 
@@ -361,11 +367,14 @@ $payment_str .= '<div id="paybox-elements">
       </div> <!-- /jumbotron -->
 
       <?php include_once("template_footer.php");?>
+      <!-- <div id="error" style="border: solid 3px black; padding:5px;"></div> -->
       <!-- jQuery -->
       <script src="js/jquery.js"></script>
 
       <!-- Bootstrap Core JavaScript -->
       <script src="js/bootstrap.min.js"></script>
+
+      <script src="js/cart.js"></script>
     </div>
   </body>
 

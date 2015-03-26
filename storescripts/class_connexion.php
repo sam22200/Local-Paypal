@@ -4,8 +4,15 @@ class createConnection //Class pour la connexion avec la BD
 {
     var $host="127.0.0.1";
     var $username="sam22200";
-    Var $password="22200sam";
+    var $password="22200sam";
+
+/*    var $host="mysql11.000webhost.com";
+    var $username="a2893237_sam22";
+    var $password="22200sam";
+*/
     var $database="transac";
+
+
     var $myconn;
 
     // Creer la connexion avec la BD

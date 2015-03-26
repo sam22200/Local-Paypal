@@ -9,6 +9,8 @@ if( $user->isLoggedIn() ){
   $user->redirectTo( 'cart' );
 }
 
+$loginAttemptTime = 3;
+
 if( isset( $_SESSION['try'] ) ){
   foreach( $_SESSION['try'] as $k => $v ){
     if( $v <= $loginAttemptTime ){

@@ -24,14 +24,21 @@ $db_pass = "22200sam";
 // Place the name for the MySQL database here
 $db_name = "transac";
 
+/*$pdoCon = sprintf("mysql:host='%s';dbname='%s'",
+                mysql_real_escape_string( $db_host ),
+                mysql_real_escape_string( $db_name )
+              );*/
+/*$q1 = sprintf("SELECT ref, payment_date, mc_gross FROM orders, transaction WERE transactions.InvoiceNumber=orders.ref AND orders.username='%s'",
+                mysql_real_escape_string( $info['id'] )
+              );
+*/
 try {
     $dbh = new PDO('mysql:host=127.0.0.1;dbname=transac', $db_username, $db_pass);
 
-$str = "";
-$str .= 'SELECT ref, payment_date, mc_gross from orders, transactions WHERE transactions.InvoiceNumber=orders.ref AND orders.username="'.$info['id'].'"';
 
-//echo $str;
-//echo "</br>";
+$str = "";
+$str .= 'SELECT ref, payment_date, mc_gross from orders, transactions WHERE transactions.txn_id=orders.ref AND orders.username="'.$info['id'].' "LIMIT 10';
+
 
 $orders = array();
 $i = 0;

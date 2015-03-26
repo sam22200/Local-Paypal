@@ -22,6 +22,7 @@ date_default_timezone_set('Europe/Paris');
     private $body;
     private $subject;
     private $invoice; //"ADAZDAAC4648D6"
+    private $order; // "PXO619668"
     private $dateOrder; //"24/03/2015"
     private $username;  //"sam22200"
     private $total;  //"300"
@@ -30,10 +31,10 @@ date_default_timezone_set('Europe/Paris');
     private $products_ordered; //"413"=>"3","414"=>"1"
     private $devise; //"EUR"
 
-
-    function __construct($inv, $date, $username, $total, $paymentMethod, $typePayment, $products_ordered, $devise)
+    function __construct($inv, $order, $date, $username, $total, $paymentMethod, $typePayment, $products_ordered, $devise)
     {
       $this->invoice = $inv;
+      $this->order = $order;
       $this->date = $date;
       $this->username = $username;
       $this->total = $total;
@@ -62,14 +63,17 @@ date_default_timezone_set('Europe/Paris');
       $body = "";
       $body .= EmailText::STORE_NAME . "\n" .
       EmailText::EMAIL_SEPARATOR . "\n\n" .
-      EmailText::EMAIL_TEXT_ORDER_NUMBER . ' ' . "\n" . '' . $this->invoice . "\n\n" .
+      EmailText::EMAIL_TEXT_ORDER_NUMBER . ' ' . "\n" . '' . $this->order . "\n\n" .
       EmailText::EMAIL_TEXT_INVOICE_URL . ' ' . "\n" . '' . $this->invoice . "\n\n" .
       EmailText::EMAIL_TEXT_DATE_ORDERED . ' ' . "\n" . '' . strftime("%A") . "\n\n\n";
       $body .= EmailText::EMAIL_TEXT_PRODUCTS . "\n" .
       EmailText::EMAIL_SEPARATOR . "\n\n";
+
       for ($i = 0, $n = sizeof($this->products_ordered); $i < $n; $i++) {
         $body .= "Référence Article : " . $this->products_ordered[$i][0] . '   -    Quantité : X ' . $this->products_ordered[$i][1] . "\n";
+        //$body .= "Reference Article : " . $this->products_ordered[$i][0] . "\n";
       }
+
       $body .= EmailText::EMAIL_SEPARATOR . "\n".
       "TOTAL : ". $this->total . ' ' . $this->devise . ' ' . "\n\n";
 
@@ -107,5 +111,4 @@ date_default_timezone_set('Europe/Paris');
       return $this->subject;
     }
   }
-
 ?>

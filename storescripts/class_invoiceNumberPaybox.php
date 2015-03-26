@@ -1,9 +1,11 @@
 <?php
   require_once 'i_invoiceNumberGenerator.php';
+  require_once 'class_order_number_generator.php';
   class invoiceNumberPaybox implements iInvoiceNumberGenerator {
 
     var $invoiceNumber;
     var $listProducts;
+    var $orderNumber;
     var $finalStringComputed;
     var $username;
 
@@ -21,10 +23,25 @@
 
       $uid = $info['id'];
       $this->setUsername($uid);
+
+
+      $orderGen = new orderNumberGenerator();
+      $orderGen->computeOrderNumber();
+
+      $this->setOrderNumber($orderGen->getNumber());
+      //$this->setOrderNumber("PXO1538478");
     }
 
     protected function setUsername($str){
       $this->username = $str;
+    }
+
+    protected function setOrderNumber($oNumber){
+      $this->orderNumber = $oNumber;
+    }
+
+    public function getOrderNumber(){
+      return $this->orderNumber;
     }
 
     protected function computeInvoiceNumber() {
@@ -73,6 +90,7 @@
     protected function mergeString(){
       $this->finalStringComputed = "$this->username|";
       $this->finalStringComputed .= "$this->listProducts|".$this->invoiceNumber;
+      $this->finalStringComputed .= "|".$this->orderNumber;
     }
 
     public function getInvoiceNumber(){

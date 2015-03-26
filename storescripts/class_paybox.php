@@ -6,6 +6,7 @@ class Paybox {
     protected $PBX_RANG;
     protected $PBX_IDENTIFIANT;
     protected $PBX_EFFECTUE;
+    protected $PBX_REPONDRE_A;
     protected $PBX_ANNULE;
     protected $PBX_TYPEPAIEMENT;
     protected $PBX_TYPECARTE;
@@ -21,12 +22,13 @@ class Paybox {
     protected $PBX_IMG;
 
 
-    public function __construct($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE, $PBX_TOTAL, $PBX_SOURCE, $PBX_DEVISE, $PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH,  $PBX_TIME, $PBX_IMG){
+    public function __construct($PAYBOX_DOMAIN_SERVER, $PBX_SITE, $PBX_RANG, $PBX_IDENTIFIANT, $PBX_EFFECTUE, $PBX_REPONDRE_A, $PBX_ANNULE, $PBX_TYPEPAIEMENT, $PBX_TYPECARTE, $PBX_TOTAL, $PBX_SOURCE, $PBX_DEVISE, $PBX_CMD, $PBX_PORTEUR, $PBX_RETOUR, $PBX_HASH,  $PBX_TIME, $PBX_IMG){
         $this->PAYBOX_DOMAIN_SERVER = $PAYBOX_DOMAIN_SERVER;
         $this->PBX_SITE = $PBX_SITE;
         $this->PBX_RANG = $PBX_RANG;
         $this->PBX_IDENTIFIANT = $PBX_IDENTIFIANT;
         $this->PBX_EFFECTUE = $PBX_EFFECTUE;
+        $this->PBX_REPONDRE_A = $PBX_REPONDRE_A;
         $this->PBX_ANNULE = $PBX_ANNULE;
         $this->PBX_TYPEPAIEMENT = $PBX_TYPEPAIEMENT;
         $this->PBX_TYPECARTE = $PBX_TYPECARTE;
@@ -55,6 +57,7 @@ class Paybox {
         "&PBX_DEVISE=$this->PBX_DEVISE".
         "&PBX_CMD=$this->PBX_CMD".
         "&PBX_EFFECTUE=$this->PBX_EFFECTUE".
+        "&PBX_REPONDRE_A=$this->PBX_REPONDRE_A".
         "&PBX_ANNULE=$this->PBX_ANNULE".
         "&PBX_TYPEPAIEMENT=$this->PBX_TYPEPAIEMENT".
         "&PBX_TYPECARTE=$this->PBX_TYPECARTE".
@@ -62,6 +65,7 @@ class Paybox {
         "&PBX_RETOUR=$this->PBX_RETOUR".
         "&PBX_HASH=$this->PBX_HASH".
         "&PBX_TIME=$this->PBX_TIME";
+
         // On récupère la clé secrète HMAC (stockée dans une base de données par exemple) et que l’on
         //renseigne dans la variable $keyTest;
         // Si la clé est en ASCII, On la transforme en binaire
@@ -91,7 +95,7 @@ class Paybox {
             $this->setPBX_HMAC();
         }
         $btn =
-        '<form method="POST" action="'.$this->PAYBOX_DOMAIN_SERVER.'">
+        '<form class="pbx-submit" method="POST" action="'.$this->PAYBOX_DOMAIN_SERVER.'">
                           <input type="hidden" name="PBX_SITE" value="'.$this->PBX_SITE.'">
                           <input type="hidden" name="PBX_RANG" value="'.$this->PBX_RANG.'">
                           <input type="hidden" name="PBX_IDENTIFIANT" value="'.$this->PBX_IDENTIFIANT.'">
@@ -100,6 +104,7 @@ class Paybox {
                           <input type="hidden" name="PBX_DEVISE" value="'.$this->PBX_DEVISE.'">
                           <input type="hidden" name="PBX_CMD" value="'.$this->PBX_CMD.'">
                           <input type="hidden" name="PBX_EFFECTUE" value="'.$this->PBX_EFFECTUE.'">
+                          <input type="hidden" name="PBX_REPONDRE_A" value="'.$this->PBX_REPONDRE_A.'">
                           <input type="hidden" name="PBX_ANNULE" value="'.$this->PBX_ANNULE.'">
                           <input type="hidden" name="PBX_TYPEPAIEMENT" value="'.$this->PBX_TYPEPAIEMENT.'">
                           <input type="hidden" name="PBX_TYPECARTE" value="'.$this->PBX_TYPECARTE.'">

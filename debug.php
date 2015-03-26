@@ -20,6 +20,18 @@
 <?php
 
 session_start();
+
+require './storescripts/class_order_number_generator.php';
+
+$gen = new orderNumberGenerator();
+$gen->computeOrderNumber();
+            echo "<tr>";
+            echo "<td>";
+            echo $gen->getNumber();
+            echo "</td>";
+            echo "<td>";
+            echo "</tr>";
+
 // Place db host name. Sometimes "localhost" but
 // sometimes looks like this: >>      ???mysql??.someserver.net
 $db_host = "127.0.0.1";

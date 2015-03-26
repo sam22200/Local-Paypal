@@ -35,7 +35,7 @@ if (isset($_GET['ref']) AND $_GET['ref'] != "")
     );
     $row = mysql_fetch_array( mysql_query( $q1 ) );
 
-    $template = new EmailText($row['InvoiceNumber'], $row['payment_date'], $info['id'], $row['mc_gross'], "CARTE", $row['payment_type'], $row['product_id_array'] , "EUR");
+    $template = new EmailText($row['InvoiceNumber'], $row['txn_id'], $row['payment_date'], $info['id'], $row['mc_gross'], "CARTE", $row['payment_type'], "413-1,414-2" , "EUR");
     $template->computeSubject();
     $template->computeBody();
 
@@ -66,6 +66,7 @@ $pdf->Write(5,$template->getSubject());
 $pdf->Write(5,"\n\n\n\n");
 $pdf->Write(5,$template->getBody());
 
+//$row['product_id_array']
 
 $pdf->Output();
 ?>

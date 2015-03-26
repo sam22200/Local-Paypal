@@ -7,13 +7,21 @@
 */
 // Place db host name. Sometimes "localhost" but
 // sometimes looks like this: >>      ???mysql??.someserver.net
-$db_host = "db4free.net:3306/adminpxo";
+/*$db_host = "db4free.net:3306/adminpxo";
 // Place the username for the MySQL database here
 $db_username = "sam22200";
 // Place the password for the MySQL database here
 $db_pass = "22200sam";
 // Place the name for the MySQL database here
-$db_name = "adminpxo";
+$db_name = "adminpxo";*/
+
+$db_host = "mysql11.000webhost.com";
+// Place the username for the MySQL database here
+$db_username = "a2893237_sam22";
+// Place the password for the MySQL database here
+$db_pass = "22200sam";
+// Place the name for the MySQL database here
+$db_name = "a2893237_Transac";
 
 // Run the actual connection here
 mysql_connect("$db_host","$db_username","$db_pass") or die ("could not connect to mysql");

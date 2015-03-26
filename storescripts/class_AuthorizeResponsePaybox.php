@@ -13,6 +13,7 @@ class AuthorizeResponsePaybox {
   private $signature;
   private $list;
   private $username;
+  private $order;
 
   //Construit l'objet AuthorizeResponsePaybox
   public function __construct($data) {
@@ -58,6 +59,7 @@ class AuthorizeResponsePaybox {
         throw new Exception("Code ref non transmis.");
       }
       $arrStr = explode( '|' , $output['ref']);
+      $this->order = $arrStr[3];
       $this->ref = $arrStr[2];
       $this->list = $arrStr[1];
       $this->username = $arrStr[0];
@@ -94,6 +96,7 @@ class AuthorizeResponsePaybox {
   protected function getPublicKey()
   {
     return  __DIR__ . '/../config/pubkey.pem';
+    //return './config/pubkey.pem';
   }
 
   //Vérifie la signature
@@ -155,6 +158,12 @@ class AuthorizeResponsePaybox {
   public function getList()
   {
     return isset($this->list) ? $this->list : null;
+  }
+
+  //Retourne le montant de la transaction
+  public function getOrder()
+  {
+    return isset($this->order) ? $this->order : null;
   }
 
   //Retourne la date de la transaction
@@ -246,7 +255,7 @@ class AuthorizeResponsePaybox {
 
     //Insert les valeurs en BASE
     $price = $this->montant/100;
-    $query="INSERT INTO transactions (product_id_array, mc_gross, txn_id, payment_date, payment_type, payment_status, invoiceNumber, address_zip) values('$this->list', '$price', '$this->ref', '$this->date', '$this->type', 'OK', '$this->ref', '$this->bin6')";
+    $query="INSERT INTO transactions (product_id_array, mc_gross, txn_id, payment_date, payment_type, payment_status, invoiceNumber, address_zip) values('$this->list', '$price', '$this->order', '$this->date', '$this->type', 'OK', '$this->ref', '$this->bin6')";
     mysql_query($query)  or die(mysql_error());
 
     return true;
