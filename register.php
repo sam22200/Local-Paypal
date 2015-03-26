@@ -40,6 +40,9 @@ if( isset( $_POST['username'] )  && $_POST['email'] != "" && $_POST['password'] 
     <!-- Custom CSS -->
     <link href="style/shop-homepage.css" rel="stylesheet">
 
+    <!-- Register CSS -->
+    <link href="style/register.css" rel="stylesheet">
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -78,20 +81,23 @@ if( !isset( $registered ) ){
                                 <div class="form-group">
                                     <label for="email" class="col-md-3 control-label">Email</label>
                                     <div class="col-md-9">
-                                        <input type="text" class="form-control" name="email" placeholder="Email Address">
+                                        <input type="text" class="form-control" name="email" placeholder="Adresse mail">
+                                        <span class="email-field"></span>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="username" class="col-md-3 control-label">Nom utilisateur</label>
                                     <div class="col-md-9">
-                                        <input type="text" class="form-control" name="username" placeholder="Username">
+                                        <input type="text" class="form-control" name="username" placeholder="Nom user">
+                                        <span class="username-field"></span>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="password" class="col-md-3 control-label">Mot de passe</label>
                                     <div class="col-md-9">
-                                        <input type="password" class="form-control" name="password" placeholder="Password">
+                                        <input type="password" class="form-control" name="password" placeholder="Mot de passe">
+                                        <span class="password-field"></span>
                                     </div>
                                 </div>
 
@@ -140,6 +146,9 @@ if( !isset( $registered ) ){
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/register.js"></script>
 
 
 </body>

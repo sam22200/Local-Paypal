@@ -83,7 +83,7 @@ if ( $is_verified && (isset($_POST['item_to_adjust']) && $_POST['item_to_adjust'
         $mail->IsSMTP();
         $mail->AddAddress($userMail);
         $mail->Subject  = "CODE ACTIVATION PRAXEDO";
-        $mail->Body = "Voici votre code d'activation : ".$inv;
+        $mail->Body = "Nous avons le plaisir de confirmer l'activation de votre compte auprès de notre service.\n\nVoici votre code d'activation : " .$inv . "\n\nRenseigner ce code pour commencer à utiliser Praxedo Intervention ! \n\n";
         $mail->WordWrap = 200;
         $mail->Send();
 

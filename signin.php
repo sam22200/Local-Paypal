@@ -53,6 +53,9 @@ if( isset( $_POST['username'] ) ){
     <!-- Custom CSS -->
     <link href="style/shop-homepage.css" rel="stylesheet">
 
+        <!-- Signin CSS -->
+    <link href="style/register.css" rel="stylesheet">
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -82,12 +85,14 @@ if( isset( $_POST['username'] ) ){
 
                             <div style="margin-bottom: 25px" class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                        <input id="login-username" type="text" class="form-control" name="username" value="" placeholder="username or email">
+                                        <input id="login-username" type="text" class="form-control" name="username" value="" placeholder="Nom user">
+                                        <span class="username-field"></span>
                                     </div>
 
                             <div style="margin-bottom: 25px" class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                        <input id="login-password" type="password" class="form-control" name="password" placeholder="password">
+                                        <input id="login-password" type="password" class="form-control" name="password" placeholder="Mot de passe">
+                                        <span class="password-field"></span>
                                     </div>
 
 
@@ -140,6 +145,9 @@ if( isset( $_POST['username'] ) ){
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
+
+    <!-- Singin JavaScript -->
+    <script src="js/signin.js"></script>
 
 
 </body>
